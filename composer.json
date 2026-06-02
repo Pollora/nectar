@@ -1,0 +1,61 @@
+{
+    "name": "pollora/nectar",
+    "description": "AI-powered development context for Pollora — guidelines, skills, and MCP tools for AI agents.",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Olivier Gorzalka",
+            "email": "olivier@amphibee.fr",
+            "role": "Developer"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "laravel/boost": "^2.0",
+        "pollora/framework": "*"
+    },
+    "require-dev": {
+        "driftingly/rector-laravel": "^2.3",
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^3.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pollora\\Nectar\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pollora\\Nectar\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pollora\\Nectar\\NectarServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": [
+            "@test:lint",
+            "@test:types",
+            "@test:unit"
+        ],
+        "test:lint": "pint --test",
+        "test:types": "phpstan analyse",
+        "test:unit": "pest",
+        "lint": "pint",
+        "refacto": "rector"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
