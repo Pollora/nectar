@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Pollora\Nectar\Mcp\Tools;
 
+use Illuminate\Routing\Route as LaravelRoute;
 use Illuminate\Support\Facades\Route;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Pollora\Route\Infrastructure\Models\Route as PolloraRoute;
 
 #[IsReadOnly]
 class WordPressRoutes extends Tool
@@ -22,10 +22,14 @@ class WordPressRoutes extends Tool
     {
         $routes = Route::getRoutes();
         $result = [];
+        $polloraRouteClass = 'Pollora\Route\Infrastructure\Models\Route';
 
-        foreach ($routes as $route) {
+        /** @var LaravelRoute $route */
+        foreach ($routes->getRoutes() as $route) {
             $action = $route->getAction();
-            $isWordPress = $route instanceof PolloraRoute && $route->isWordPressRoute();
+            $isWordPress = $route instanceof $polloraRouteClass
+                && method_exists($route, 'isWordPressRoute')
+                && $route->isWordPressRoute(); // @phpstan-ignore-line
 
             $routeInfo = [
                 'uri' => $route->uri(),
@@ -39,14 +43,15 @@ class WordPressRoutes extends Tool
                 $routeInfo['controller'] = $action['controller'];
             }
 
-            if ($isWordPress && $route->hasCondition()) {
-                $routeInfo['wp_condition'] = $route->getCondition();
-                $routeInfo['wp_condition_params'] = $route->getConditionParameters();
+            if ($isWordPress && method_exists($route, 'hasCondition') && $route->hasCondition()) { // @phpstan-ignore-line
+                $routeInfo['wp_condition'] = $route->getCondition(); // @phpstan-ignore-line
+                $routeInfo['wp_condition_params'] = $route->getConditionParameters(); // @phpstan-ignore-line
             }
 
             $result[] = $routeInfo;
         }
 
+        /** @var array<int, array<string, mixed>> $result */
         $wpRoutes = collect($result)->where('is_wordpress_route', true)->count();
         $laravelRoutes = collect($result)->where('is_wordpress_route', false)->count();
 

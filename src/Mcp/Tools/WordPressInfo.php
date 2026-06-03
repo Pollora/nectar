@@ -23,8 +23,11 @@ class WordPressInfo extends Tool
         }
 
         // get_plugins() requires wp-admin/includes/plugin.php which may not be loaded in console context
-        if (! function_exists('get_plugins') && defined('ABSPATH') && file_exists(ABSPATH.'wp-admin/includes/plugin.php')) {
-            require_once ABSPATH.'wp-admin/includes/plugin.php';
+        if (! function_exists('get_plugins') && defined('ABSPATH')) {
+            $pluginFile = ABSPATH.'wp-admin/includes/plugin.php';
+            if (file_exists($pluginFile)) {
+                require_once $pluginFile; // @phpstan-ignore requireOnce.fileNotFound
+            }
         }
 
         $plugins = function_exists('get_plugins') ? get_plugins() : [];
