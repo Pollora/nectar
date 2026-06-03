@@ -6,18 +6,18 @@ namespace Pollora\Nectar\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
-use Illuminate\Support\Facades\File;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Discovery\Application\Services\DiscoveryManager;
 
 #[IsReadOnly]
 class RegisteredHooks extends Tool
 {
     protected string $name = 'registered_hooks';
 
-    protected string $description = 'List hooks discovered via #[Action] and #[Filter] attributes in the Pollora discovery cache, including class, method, priority, and hook name.';
+    protected string $description = 'List hooks discovered via #[Action] and #[Filter] attributes in the Pollora discovery system, including class, method, priority, and hook name.';
 
     /**
      * @return array<string, Type>
@@ -32,55 +32,56 @@ class RegisteredHooks extends Tool
 
     public function handle(Request $request): Response
     {
+        if (! app()->bound(DiscoveryManager::class)) {
+            return Response::text('Discovery system is not available. Ensure Pollora framework is properly installed.');
+        }
+
         $type = $request->get('type');
 
-        $cachePath = base_path('bootstrap/cache/discovery.php');
+        /** @var DiscoveryManager $discoveryManager */
+        $discoveryManager = app(DiscoveryManager::class);
 
-        if (! File::exists($cachePath)) {
-            return Response::text('Discovery cache not found. Run "php artisan discovery:run" to generate it.');
+        try {
+            $discoveredItems = $discoveryManager->getDiscoveredItems('hooks');
+        } catch (\Throwable) {
+            return Response::text('Unable to retrieve discovered hooks. Run "php artisan discovery:run" to generate the discovery cache.');
         }
-
-        $discovered = require $cachePath;
 
         $hooks = [];
 
-        if (! $type || $type === 'action') {
-            $hooks['actions'] = $this->extractHooks($discovered, 'Pollora\Attributes\Action');
-        }
+        foreach ($discoveredItems as $item) {
+            $hookType = $item['type'] ?? 'unknown';
 
-        if (! $type || $type === 'filter') {
-            $hooks['filters'] = $this->extractHooks($discovered, 'Pollora\Attributes\Filter');
-        }
-
-        return Response::json($hooks);
-    }
-
-    /**
-     * @return array<int, array{class: string, method: string, hook: string, priority: int}>
-     */
-    private function extractHooks(array $discovered, string $attributeClass): array
-    {
-        $hooks = [];
-
-        foreach ($discovered as $class => $attributes) {
-            if (! is_array($attributes)) {
+            if ($type && $type !== $hookType) {
                 continue;
             }
 
-            foreach ($attributes as $attribute) {
-                if (! is_array($attribute) || ($attribute['attribute'] ?? null) !== $attributeClass) {
-                    continue;
-                }
-
-                $hooks[] = [
-                    'class' => $class,
-                    'method' => $attribute['method'] ?? 'unknown',
-                    'hook' => $attribute['arguments']['hook'] ?? $attribute['arguments'][0] ?? 'unknown',
-                    'priority' => $attribute['arguments']['priority'] ?? $attribute['arguments'][1] ?? 10,
-                ];
+            try {
+                $attribute = $item['attribute']->newInstance();
+                $hookName = $attribute->hook;
+                $priority = $attribute->priority ?? 10;
+            } catch (\Throwable) {
+                $hookName = 'unknown';
+                $priority = 10;
             }
+
+            $key = $hookType === 'action' ? 'actions' : 'filters';
+            $hooks[$key][] = [
+                'class' => $item['class'] ?? 'unknown',
+                'method' => $item['method'] ?? 'unknown',
+                'hook' => $hookName,
+                'priority' => $priority,
+            ];
         }
 
-        return $hooks;
+        if (! $type || $type === 'action') {
+            $hooks['actions'] ??= [];
+        }
+
+        if (! $type || $type === 'filter') {
+            $hooks['filters'] ??= [];
+        }
+
+        return Response::json($hooks);
     }
 }

@@ -22,6 +22,11 @@ class WordPressInfo extends Tool
             return Response::text('WordPress is not loaded in this context.');
         }
 
+        // get_plugins() requires wp-admin/includes/plugin.php which may not be loaded in console context
+        if (! function_exists('get_plugins') && defined('ABSPATH') && file_exists(ABSPATH.'wp-admin/includes/plugin.php')) {
+            require_once ABSPATH.'wp-admin/includes/plugin.php';
+        }
+
         $plugins = function_exists('get_plugins') ? get_plugins() : [];
         $activePlugins = function_exists('get_option') ? (array) get_option('active_plugins', []) : [];
 

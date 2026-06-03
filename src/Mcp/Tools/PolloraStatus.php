@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Pollora\Nectar\Mcp\Tools;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Discovery\Application\Services\DiscoveryManager;
 
 #[IsReadOnly]
 class PolloraStatus extends Tool
@@ -28,7 +30,7 @@ class PolloraStatus extends Tool
             ? get_stylesheet()
             : 'unknown';
 
-        $discoveryCached = File::exists(base_path('bootstrap/cache/discovery.php'));
+        $discoveryCached = $this->isDiscoveryCached();
 
         $polloraPackages = collect(json_decode(
             File::get(base_path('composer.lock')),
@@ -50,6 +52,16 @@ class PolloraStatus extends Tool
             'discovery_cached' => $discoveryCached,
             'pollora_packages' => $polloraPackages,
         ]);
+    }
+
+    private function isDiscoveryCached(): bool
+    {
+        if (! app()->bound(DiscoveryManager::class)) {
+            return false;
+        }
+
+        // Check if any discovery cache keys exist in Laravel cache
+        return Cache::has('pollora-discoverer-cache-discovery');
     }
 
     private function getPolloraVersion(): string
