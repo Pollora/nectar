@@ -25,6 +25,7 @@ Nectar feeds AI agents with the context they need to write high-quality Pollora 
 | **AI Guidelines** | Pollora architecture, PHP attributes, WordPress routing, Blade theming — injected into your agent's context via Boost |
 | **8 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API, scheduling, and modules |
 | **10 MCP Tools** | Live introspection of your WordPress & Pollora environment directly from your AI agent |
+| **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora major versions (e.g., 12→13) |
 
 ## Installation
 
@@ -116,6 +117,20 @@ Skills are activated on-demand when working on specific tasks:
 | `pollora-scheduling` | Scheduled tasks with `#[Schedule]` |
 | `pollora-modules` | Laravel Modules with auto-discovery |
 
+## Upgrade Assistance
+
+Nectar provides MCP upgrade prompts that guide AI agents through Pollora major version upgrades. Prompts are **automatically registered** when the current project version matches.
+
+| Prompt | Available when | Covers |
+|--------|---------------|--------|
+| `upgrade-pollora-v13` | Pollora 12.x detected | Loop facade removal, config registration removal, CSRF middleware rename, Vite theme.json setup, WordPress 7.0, and more |
+
+The upgrade prompt includes:
+- Step-by-step process (assess → safety net → analyze → apply → update deps → clean up)
+- All breaking changes with search patterns and before/after code examples
+- Theme build pipeline updates (`@roots/vite-plugin`, `wordpressThemeJson`)
+- Post-upgrade cleanup (`wp transient delete --all`)
+
 ## Configuration
 
 Publish the config file:
@@ -141,8 +156,8 @@ return [
 ## Requirements
 
 - PHP ^8.3
-- Laravel 13.x
-- Pollora Framework ^13.0
+- Laravel 12.x or 13.x
+- Pollora Framework (any version)
 - Laravel Boost ^2.0
 
 ## License
