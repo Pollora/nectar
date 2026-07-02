@@ -104,8 +104,8 @@ $callbacks = Action::callbacks('init');
 ## Generating Hook Classes
 
 ```bash
-php artisan pollora:make-action MyAction
-php artisan pollora:make-filter MyFilter
+php artisan pollora:make:action MyAction
+php artisan pollora:make:filter MyFilter
 ```
 
 ## Important Notes

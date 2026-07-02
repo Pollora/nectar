@@ -358,7 +358,7 @@ After upgrading, consider adopting these new features:
 Generate blocks with the new Artisan command:
 
 ```bash
-php artisan pollora:make-block my-block
+php artisan pollora:make:block my-block
 ```
 
 Creates a block with `block.json`, JSX/TSX entry, and CSS — built with Vite and Tailwind CSS v4.

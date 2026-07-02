@@ -11,7 +11,7 @@ Use this skill when creating, configuring, or customizing WordPress Gutenberg bl
 ## Generating a Block
 
 ```bash
-php artisan pollora:make-block hero-banner --theme --dynamic
+php artisan pollora:make:block hero-banner --theme --dynamic
 ```
 
 Options:

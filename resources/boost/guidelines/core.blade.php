@@ -65,7 +65,7 @@ public function dailyCleanup(): void {}
 
 ### Theme Development
 
-Themes are generated with `php artisan pollora:make-theme my-theme`. Theme structure:
+Themes are generated with `php artisan pollora:make:theme my-theme`. Theme structure:
 
 ```
 themes/my-theme/
@@ -94,10 +94,10 @@ Themes use Vite for asset bundling with HMR, Tailwind CSS v4, and the `Asset` fa
 ### Available Artisan Commands
 
 - `pollora:install` — Full project installation
-- `pollora:make-theme` — Generate a new theme
-- `pollora:make-block` — Generate a Gutenberg block
-- `pollora:make-post-type` — Generate a post type class
-- `pollora:make-action` / `pollora:make-filter` — Generate hook classes
+- `pollora:make:theme` — Generate a new theme
+- `pollora:make:block` — Generate a Gutenberg block
+- `pollora:make:post-type` — Generate a post type class
+- `pollora:make:action` / `pollora:make:filter` — Generate hook classes
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:status` — Show framework status
 

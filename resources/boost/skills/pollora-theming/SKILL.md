@@ -13,7 +13,7 @@ Use this skill when creating themes, working with Blade templates, configuring a
 Generate a new theme:
 
 ```bash
-php artisan pollora:make-theme my-theme
+php artisan pollora:make:theme my-theme
 ```
 
 This creates a complete theme at `themes/my-theme/` and auto-activates it.
