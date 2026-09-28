@@ -22,7 +22,7 @@ class Nectar extends Server
 {
     protected string $name = 'Pollora Nectar';
 
-    protected string $version = '0.2.0';
+    protected string $version = '1.1.0';
 
     protected string $instructions = 'Pollora Nectar provides WordPress and Pollora-specific development tools. Use these tools to inspect WordPress configuration, registered post types, taxonomies, hooks, routes, and the active theme. These tools complement Laravel Boost with WordPress/Pollora context. Upgrade prompts are available when a newer Pollora version is detected.';
 
