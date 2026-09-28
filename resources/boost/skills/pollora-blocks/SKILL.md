@@ -1,36 +1,44 @@
 ---
 name: pollora-blocks
-description: Create Gutenberg blocks in Pollora themes with Vite, JSX/TSX, and Tailwind CSS integration.
+description: Create Gutenberg blocks in Pollora themes, plugins and modules with Vite, JSX/TSX, Blade rendering and Tailwind CSS.
 ---
 
 # Pollora Block Development
 
 ## When to use this skill
-Use this skill when creating, configuring, or customizing WordPress Gutenberg blocks within a Pollora theme.
+Use this skill when creating, configuring, or customizing WordPress Gutenberg blocks within a Pollora theme, plugin or module.
 
 ## Generating a Block
 
 ```bash
-php artisan pollora:make:block hero-banner --theme --dynamic
+php artisan pollora:make:block hero-banner --theme
 ```
 
 Options:
-- `--theme` — Create in the active theme's `resources/blocks/` directory
-- `--dynamic` — Include a `render.php` for server-side rendering
+- `--theme[=NAME]` — Create in a theme (default: the active theme)
+- `--plugin=NAME` — Create in a plugin
+- `--static` — A static block saved in `post_content` (`save.jsx`, no `render.blade.php`)
+- `--inner-blocks` — Add InnerBlocks support
+- `--namespace=NS`, `--title=TITLE`, `--category=CAT`, `--icon=ICON`, `--no-view-script`, `--force`
+- `--dynamic` is deprecated: blocks are dynamic by default
+
+On the first block, the command patches `vite.config.js` (block entries, `wordpressPlugin()`, Blade-only full reloads) and adds the npm dependencies. It refuses a theme or plugin with no `package.json` or no `vite.config.js`.
 
 ## Block Structure
 
 ```
-resources/blocks/hero-banner/
+resources/views/blocks/hero-banner/
 ├── block.json           # WordPress block metadata
+├── render.blade.php     # Server-side render (default)
 ├── index.jsx            # Entry point & registration
-├── edit.jsx             # Editor component (what authors see)
-├── save.jsx             # Static save (or null for dynamic blocks)
-├── render.php           # Server-side render (dynamic blocks only)
+├── edit.jsx             # Editor component — shows what the page will show
+├── save.jsx             # Static blocks only (--static)
 ├── editor.css           # Editor-only styles
 ├── style.css            # Shared frontend + editor styles
-└── view.js              # Frontend-only interactive script
+└── view.js              # Frontend-only script (optional)
 ```
+
+Blocks are **dynamic by default**: `render.blade.php` renders them on each request, so their markup is not stored in `post_content`. Changing the markup updates every existing block instead of triggering "This block contains unexpected or invalid content".
 
 ## block.json
 
@@ -43,7 +51,6 @@ resources/blocks/hero-banner/
     "title": "Hero Banner",
     "category": "theme",
     "icon": "cover-image",
-    "description": "A full-width hero banner with heading and CTA.",
     "supports": {
         "html": false,
         "align": ["wide", "full"]
@@ -58,70 +65,57 @@ resources/blocks/hero-banner/
     "editorStyle": "file:./editor.css",
     "style": "file:./style.css",
     "viewScript": "file:./view.js",
-    "render": "file:./render.php"
+    "render": "file:./render.blade.php"
 }
 ```
 
 ## Editor Component (edit.jsx)
 
+For a dynamic block, the editor should show what the page shows: render the same markup (or use `ServerSideRender`).
+
 ```jsx
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { TextControl } from '@wordpress/components';
 
 export default function Edit({ attributes, setAttributes }) {
-    const blockProps = useBlockProps();
-
     return (
-        <div {...blockProps}>
+        <section {...useBlockProps()}>
             <RichText
                 tagName="h1"
                 value={attributes.heading}
                 onChange={(heading) => setAttributes({ heading })}
                 placeholder="Enter heading..."
             />
-            <TextControl
-                label="CTA Text"
-                value={attributes.ctaText}
-                onChange={(ctaText) => setAttributes({ ctaText })}
-            />
-        </div>
+        </section>
     );
 }
 ```
 
-## Dynamic Render (render.php)
+## Rendering with Blade (render.blade.php)
 
-```php
-<?php
-/**
- * @var array $attributes Block attributes.
- * @var string $content Block content.
- * @var WP_Block $block Block instance.
- */
-?>
-<div <?php echo get_block_wrapper_attributes(); ?>>
-    <h1><?php echo esc_html($attributes['heading']); ?></h1>
-    <a href="<?php echo esc_url($attributes['ctaUrl']); ?>" class="btn">
-        <?php echo esc_html($attributes['ctaText']); ?>
+The template receives `$attributes` (array), `$content` (inner blocks HTML) and `$block` (`WP_Block`). Blade components work as in any view.
+
+```blade
+<section {!! get_block_wrapper_attributes(['class' => 'py-16']) !!}>
+    <h1 class="text-3xl font-bold">{{ $attributes['heading'] ?? '' }}</h1>
+    <a href="{{ esc_url_raw($attributes['ctaUrl'] ?? '#') }}" class="btn">
+        {{ $attributes['ctaText'] ?? '' }}
     </a>
-</div>
+    {!! $content !!}
+</section>
 ```
 
-## Registering Blocks
+- `{{ }}` escapes; use `{!! !!}` only for `get_block_wrapper_attributes()` and `$content`.
+- For URLs use `esc_url_raw()` inside `{{ }}` — `esc_url()` would be encoded twice.
+- The render file must stay inside the block directory, or the block renders nothing and a warning is logged.
+- A plain `render.php` still works.
 
-In a service provider:
+## Registration
 
-```php
-use Pollora\Block\Infrastructure\Services\BlockRegistrar;
+There is nothing to write. Pollora registers the blocks of every active theme, plugin and module on WordPress `init`: whatever holds a `resources/views/blocks` directory (or the deprecated `resources/blocks`).
 
-public function boot(BlockRegistrar $registrar): void
-{
-    $registrar->registerDirectory(
-        directory: dirname(__DIR__, 2) . '/resources/blocks',
-        containerName: 'theme',
-    );
-}
-```
+- Do **not** create a `BlocksServiceProvider` or call `register_block_type()`: a provider boots after `init` over HTTP and not at all for REST requests, so its blocks would exist in WP-CLI only.
+- A `BlocksServiceProvider` left by an older `pollora:make:block` is harmless and can be deleted.
+- Assets resolve through the module's asset container: `theme`, `plugin.{slug}` or `module.{slug}`.
 
 ## Tailwind CSS in Blocks
 
@@ -132,7 +126,6 @@ public function boot(BlockRegistrar $registrar): void
 
 .wp-block-my-theme-hero-banner {
     @apply relative py-24 px-8 rounded-xl overflow-hidden;
-    background: linear-gradient(135deg, theme(--color-indigo-950) 0%, theme(--color-violet-900) 100%);
 }
 ```
 
@@ -148,25 +141,39 @@ public function boot(BlockRegistrar $registrar): void
 
 ## Vite Configuration for Blocks
 
-```js
-import { globSync } from 'fs';
-import path from 'path';
+`pollora:make:block` writes this on first use:
 
-const blockEntries = globSync('./resources/blocks/*/{index,view}.{js,jsx,ts,tsx}')
-    .concat(globSync('./resources/blocks/*/{editor,style}.css'))
+```js
+import { wordpressPlugin } from '@roots/vite-plugin';
+import { globSync } from 'glob';
+
+const blockEntries = globSync([
+    './resources/views/blocks/*/{index,view}.{js,jsx,ts,tsx}',
+    './resources/views/blocks/*/{editor,style}.css',
+])
     .reduce((acc, file) => {
-        const slug = path.basename(path.dirname(file));
-        const name = path.basename(file, path.extname(file));
-        acc[`blocks/${slug}/${name}`] = file;
+        acc[file.replace(/^\.\//, '').replace(/\.\w+$/, '')] = file;
         return acc;
     }, {});
+const hasBlocks = Object.keys(blockEntries).length > 0;
+
+// input: [..., ...Object.values(blockEntries)]
+// plugins: [..., ...(hasBlocks ? [wordpressPlugin()] : [])]
+// refresh: Blade files only, so block JSX hot-reloads:
+//   [...refreshPaths.filter((p) => p !== 'resources/views/**'), 'resources/views/**/*.blade.php']
 ```
+
+## Migrating from `resources/blocks`
+
+The old directory is still registered, with a deprecation notice in the log, until Pollora v15.
+
+1. `git mv resources/blocks resources/views/blocks`
+2. Delete `app/Providers/BlocksServiceProvider.php` if present
+3. Update the `vite.config.js` globs and full reloads (running `pollora:make:block` does it)
+4. Optionally convert a static block: add `"render": "file:./render.blade.php"`, move the markup of `save.jsx` into it, set `save: () => null`
 
 ## Important Notes
 
-- Block names follow the pattern `{theme-slug}/{block-slug}` (e.g., `my-theme/hero-banner`)
-- Use `@import "tailwindcss" source(".")` in `style.css` for full Tailwind support
-- Use `@reference "tailwindcss"` in `editor.css` for editor-only Tailwind utilities
-- Dynamic blocks use `render.php` and return `null` from `save.jsx`
-- Vite auto-discovers block assets — no manual entry configuration needed
-- The `BlockRegistrar` handles WordPress `register_block_type()` automatically
+- Block names follow the pattern `{namespace}/{block-slug}` (e.g., `my-theme/hero-banner`)
+- Use `@import "tailwindcss" source(".")` in `style.css`, `@reference "tailwindcss"` in `editor.css`
+- Custom `BlockRegistrarInterface` implementations: both methods take an optional `?string $basePath = null` (since v13.32)

@@ -29,6 +29,7 @@ themes/my-theme/
 ├── config/
 │   ├── gutenberg.php         # Block editor settings
 │   ├── images.php            # Custom image sizes
+│   ├── login.php             # Login screen (opt-in), see below
 │   ├── menus.php             # Menu locations
 │   ├── providers.php         # Additional service providers
 │   ├── sidebars.php          # Widget areas
@@ -43,16 +44,16 @@ themes/my-theme/
 │   └── views/
 │       ├── layouts/
 │       │   └── app.blade.php # Main layout
+│       ├── blocks/           # Gutenberg blocks (see pollora-blocks)
 │       ├── parts/            # Reusable partials
 │       ├── home.blade.php
 │       ├── page.blade.php
 │       ├── single.blade.php
 │       └── index.blade.php
-├── functions.php             # Theme registration entry point
+├── functions.php             # pollora_register(ModuleType::Theme)
 ├── style.css                 # WordPress theme metadata (name, version, description)
 ├── theme.json                # Base block editor config; the build adds the @theme tokens
 ├── vite.config.js            # Vite build configuration
-├── tailwind.config.js        # Tailwind (v3) or not needed (v4 auto-detection)
 └── package.json
 ```
 
@@ -95,6 +96,8 @@ Asset::add('theme/scripts', 'resources/assets/js/app.js')
 $logoUrl = Asset::url('assets/images/logo.png');
 $cssUrl = Asset::url('assets/css/app.css')->from('theme');
 ```
+
+WordPress's `get_theme_file_uri('resources/assets/images/logo.svg')` also returns the URL the build gave that file, so plugins and core code that call it work. A theme file outside the Vite build has no public URL.
 
 ### Vite Configuration
 
@@ -177,6 +180,35 @@ return [
     'footer' => __('Footer Navigation', 'my-theme'),
 ];
 ```
+
+## Login Screen
+
+Add `config/login.php` and the WordPress login screen wears the theme's design, read from `theme.json` (colours, radii, fonts). Without the file, WordPress's screen is unchanged.
+
+```php
+return [
+    'enabled' => true,
+    'logo' => [
+        'source' => 'resources/assets/images/logo.svg', // path in the theme, URL or attachment id
+        'width' => 220,
+    ],
+    // Only when the palette uses its own slug names:
+    // 'tokens' => ['primary' => ['brand-600'], 'accent' => 'oklch(70% .2 30)'],
+];
+```
+
+Roles resolve from common slugs (`primary`, `surface`, `foreground`, `outline`…). Modules and plugins can take over with the `pollora/login/palette`, `pollora/login/logo`, `pollora/login/styles` and `pollora/login/credit` filters.
+
+## Debugging Templates
+
+With `WP_DEBUG` on, each page rendered through the template hierarchy says which template answered:
+
+```bash
+curl -s https://site.test/some-page | grep pollora:template
+# <!-- pollora:template="page" path="themes/my-theme/resources/views/page.blade.php" -->
+```
+
+Responses from `Route::wp()` and Laravel routes carry no marker.
 
 ## Important Notes
 

@@ -123,4 +123,4 @@ public function show(\WP_Post $post): \Illuminate\View\View
 - Run `php artisan discovery:clear` after creating a new post type class during development
 - Labels are auto-generated from the class name if not specified
 - The slug is derived from the `#[PostType('slug')]` attribute parameter
-- Generate a post type with `php artisan pollora:make-post-type`
+- Generate a post type with `php artisan pollora:make:post-type`
