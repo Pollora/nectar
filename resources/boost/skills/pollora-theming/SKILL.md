@@ -50,7 +50,7 @@ themes/my-theme/
 │       └── index.blade.php
 ├── functions.php             # Theme registration entry point
 ├── style.css                 # WordPress theme metadata (name, version, description)
-├── theme.json                # Block editor / Full Site Editing config
+├── theme.json                # Base block editor config; the build adds the @theme tokens
 ├── vite.config.js            # Vite build configuration
 ├── tailwind.config.js        # Tailwind (v3) or not needed (v4 auto-detection)
 └── package.json
@@ -182,7 +182,8 @@ return [
 
 - **Never create WordPress PHP template files** — use Blade exclusively
 - Theme providers in `app/Providers/` are auto-discovered
-- The `theme.json` file controls block editor settings (colors, fonts, spacing)
+- Design tokens (colours, font sizes, fonts, radii) go in the `@theme static` block of `app.css`, with concrete values; `wordpressThemeJson` writes them into the built `theme.json` the editor reads. Never `@import "tailwindcss" theme(static)` (it puts Tailwind's whole palette in the editor), never `var(--wp--preset--…)` inside `@theme` (a cycle once copied)
+- The root `theme.json` is the base: layout, spacing, `fontFace`, editor settings. A slug defined there wins over `@theme`; a whole family can be taken out of the generation with `disableTailwindColors` / `disableTailwindFontSizes` / `disableTailwindFonts` / `disableTailwindBorderRadius`
 - Tailwind CSS v4 is auto-detected — no configuration file needed
 - Build output goes to `public/build/theme/{theme-name}/`
 - Use `Asset` facade in service providers, not in hookable classes
