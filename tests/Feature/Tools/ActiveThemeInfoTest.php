@@ -11,7 +11,9 @@ beforeEach(function () {
     // Create theme directory structure
     @mkdir("{$themePath}/config", 0777, true);
     @mkdir("{$themePath}/app/Providers", 0777, true);
-    @mkdir("{$themePath}/resources/blocks/hero", 0777, true);
+    @mkdir("{$themePath}/resources/views/blocks/hero", 0777, true);
+    @mkdir("{$themePath}/resources/views/blocks/not-a-block", 0777, true);
+    @mkdir("{$themePath}/resources/blocks/legacy-banner", 0777, true);
     @mkdir("{$themePath}/resources/views/partials", 0777, true);
 
     file_put_contents("{$themePath}/config/menus.php", '<?php return [];');
@@ -22,6 +24,8 @@ beforeEach(function () {
     file_put_contents("{$themePath}/vite.config.js", 'export default {}');
     file_put_contents("{$themePath}/package.json", '{"dependencies": {"tailwindcss": "^4.0"}}');
     file_put_contents("{$themePath}/theme.json", '{}');
+    file_put_contents("{$themePath}/resources/views/blocks/hero/block.json", '{}');
+    file_put_contents("{$themePath}/resources/blocks/legacy-banner/block.json", '{}');
 });
 
 afterEach(function () {
@@ -65,10 +69,22 @@ it('lists service providers', function () {
         ->assertSee('ThemeServiceProvider');
 });
 
-it('lists blocks', function () {
+it('lists blocks from resources/views/blocks', function () {
     Nectar::tool(ActiveThemeInfo::class)
         ->assertOk()
-        ->assertSee('hero');
+        ->assertSee('"blocks":["hero"]');
+});
+
+it('ignores a directory without block.json', function () {
+    Nectar::tool(ActiveThemeInfo::class)
+        ->assertOk()
+        ->assertDontSee('not-a-block');
+});
+
+it('reports blocks left in the deprecated resources/blocks', function () {
+    Nectar::tool(ActiveThemeInfo::class)
+        ->assertOk()
+        ->assertSee('"blocks_in_deprecated_directory":["legacy-banner"]');
 });
 
 it('lists blade templates recursively', function () {
