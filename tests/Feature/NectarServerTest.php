@@ -39,5 +39,5 @@ it('has correct server metadata', function () {
     $version = $reflection->getProperty('version')->getDefaultValue();
 
     expect($name)->toBe('Pollora Nectar');
-    expect($version)->toBe('1.1.0');
+    expect($version)->toBe('1.1.1');
 });
