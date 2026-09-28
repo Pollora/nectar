@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-28
+
+### Changed
+
+- **`pollora-blocks` skill and core guidelines**: `<InnerBlocks />` in a block's `render.blade.php` (Pollora 13.32.0-beta.9), its options as attributes, `$isPreview`, and `pollora:make:block --inner-blocks`. A project on an earlier beta should not read them: it lacks the runtime they describe
+
 ## [1.1.1] - 2026-09-28
 
 ### Fixed
