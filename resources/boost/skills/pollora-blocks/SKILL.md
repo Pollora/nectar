@@ -18,7 +18,7 @@ Options:
 - `--theme[=NAME]` — Create in a theme (default: the active theme)
 - `--plugin=NAME` — Create in a plugin
 - `--static` — A static block saved in `post_content` (`save.jsx`, no `render.blade.php`)
-- `--inner-blocks` — Add InnerBlocks support
+- `--inner-blocks` — Add inner blocks: `<InnerBlocks />` in `render.blade.php` (Gutenberg's `InnerBlocks` in `edit.jsx`/`save.jsx` with `--static`)
 - `--namespace=NS`, `--title=TITLE`, `--category=CAT`, `--icon=ICON`, `--no-view-script`, `--force`
 - `--dynamic` is deprecated: blocks are dynamic by default
 
@@ -69,30 +69,28 @@ Blocks are **dynamic by default**: `render.blade.php` renders them on each reque
 }
 ```
 
-## Editor Component (edit.jsx)
+## Editor Component (edit.jsx) and save
 
-For a dynamic block, the editor should show what the page shows: render the same markup (or use `ServerSideRender`).
+A generated dynamic block is edited through the framework's editor runtime, `window.pollora.blocks`, which Pollora loads with every block that has a `render` template (handle `pollora-block-editor`). Nothing to install or import:
 
 ```jsx
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+// edit.jsx
+import metadata from './block.json';
 
-export default function Edit({ attributes, setAttributes }) {
-    return (
-        <section {...useBlockProps()}>
-            <RichText
-                tagName="h1"
-                value={attributes.heading}
-                onChange={(heading) => setAttributes({ heading })}
-                placeholder="Enter heading..."
-            />
-        </section>
-    );
-}
+export default window.pollora.blocks.bladeEdit(metadata);
+
+// index.jsx
+registerBlockType(metadata.name, {
+    edit: Edit,
+    save: window.pollora.blocks.save, // stores the inner blocks, nothing else
+});
 ```
+
+`bladeEdit` previews `render.blade.php` through the core block-renderer REST route (again 200 ms after an attribute change) and makes its `<InnerBlocks />` editable in place. Framework v13.32.0-beta.8 and earlier generate `ServerSideRender` and `save: () => null` instead — check `edit.jsx` before assuming.
 
 ## Rendering with Blade (render.blade.php)
 
-The template receives `$attributes` (array), `$content` (inner blocks HTML) and `$block` (`WP_Block`). Blade components work as in any view.
+The template receives `$attributes` (array), `$content` (inner blocks HTML), `$block` (`WP_Block`) and `$isPreview` (true while it renders for the editor's preview). Blade components work as in any view.
 
 ```blade
 <section {!! get_block_wrapper_attributes(['class' => 'py-16']) !!}>
@@ -100,14 +98,35 @@ The template receives `$attributes` (array), `$content` (inner blocks HTML) and 
     <a href="{{ esc_url_raw($attributes['ctaUrl'] ?? '#') }}" class="btn">
         {{ $attributes['ctaText'] ?? '' }}
     </a>
-    {!! $content !!}
 </section>
 ```
 
 - `{{ }}` escapes; use `{!! !!}` only for `get_block_wrapper_attributes()` and `$content`.
 - For URLs use `esc_url_raw()` inside `{{ }}` — `esc_url()` would be encoded twice.
 - The render file must stay inside the block directory, or the block renders nothing and a warning is logged.
-- A plain `render.php` still works.
+- A plain `render.php` still works, with the same variables.
+
+## Inner Blocks: `<InnerBlocks />`
+
+Write `<InnerBlocks />` in the template where the inner blocks go (ACF-style). In the editor they are edited right there; on the page they replace the tag, inside a `div` with the tag's `class` (default `pollora-inner-blocks`) — the same `div` the editor renders.
+
+```blade
+<article {!! get_block_wrapper_attributes(['class' => 'card']) !!}>
+    <h3 class="card__title">{{ $attributes['title'] ?? '' }}</h3>
+    <InnerBlocks
+        class="card__body"
+        allowedBlocks="{{ json_encode(['core/paragraph', 'core/list']) }}"
+        template="{{ json_encode([['core/paragraph', ['placeholder' => 'Write…']]]) }}"
+        templateLock="false"
+    />
+</article>
+```
+
+- Options are Gutenberg's inner blocks options as attributes: `allowedBlocks`, `template`, `templateLock`, `orientation`, `defaultBlock`, `directInsert`… JSON for arrays/objects (write it with `{{ json_encode(...) }}`, which escapes quotes and `>`), `"true"`/`"false"` for booleans.
+- One list per block: only the first tag gets the inner blocks; further tags are dropped.
+- The inner blocks are saved in `post_content`; the rest of the block is not, so template changes reach existing blocks.
+- In the preview, `$content` is empty and the tag stays for the editor; `<script>` and `on…` attributes are left out. Use `$isPreview` for editor-only hints.
+- Requires the framework after v13.32.0-beta.8 (the runtime above). Do not use `ServerSideRender` or a hand-written `InnerBlocks` edit for a Blade block with inner blocks.
 
 ## Registration
 
@@ -170,7 +189,7 @@ The old directory is still registered, with a deprecation notice in the log, unt
 1. `git mv resources/blocks resources/views/blocks`
 2. Delete `app/Providers/BlocksServiceProvider.php` if present
 3. Update the `vite.config.js` globs and full reloads (running `pollora:make:block` does it)
-4. Optionally convert a static block: add `"render": "file:./render.blade.php"`, move the markup of `save.jsx` into it, set `save: () => null`
+4. Optionally convert a static block: add `"render": "file:./render.blade.php"`, move the markup of `save.jsx` into it, set `save: window.pollora.blocks.save`
 
 ## Important Notes
 

@@ -104,7 +104,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - **WordPress objects** (`WP_Post`, `WP_Query`, `WP_User`) are auto-injected via type hints in controller methods
 - **Facades**: `Action`, `Filter`, `Ajax`, `Asset`, `Theme`, `PostType`, `Taxonomy`, `Option`, `Ability`, `PostQuery`, `MetaQuery`, `TaxQuery`, `Mail`, `Constant`. There is no `Loop` or `Query` facade: use Sage Directives in Blade, WordPress functions in PHP
 - **Translations**: `__('Text', 'my-domain')` goes to WordPress's catalogues; `__('key', ['name' => $x])` goes to Laravel; `__('Text')` tries Laravel, then WordPress's `default` domain
-- **Blocks**: live in `resources/views/blocks/{slug}`, render with `render.blade.php` by default, and are registered by Pollora — never write a `BlocksServiceProvider`
+- **Blocks**: live in `resources/views/blocks/{slug}`, render with `render.blade.php` by default, and are registered by Pollora — never write a `BlocksServiceProvider`; `<InnerBlocks />` in `render.blade.php` marks where inner blocks go, edited in place in the editor (see the `pollora-blocks` skill)
 - **Which template answered?** With `WP_DEBUG` on, every page carries `<!-- pollora:template="single" path="themes/x/resources/views/single.blade.php" -->` (hierarchy responses only, not `Route::wp()` or Laravel routes)
 - **CSRF**: WordPress endpoints are excluded from Laravel CSRF — WordPress uses its own nonce system
 - **Modules**: Use `nwidart/laravel-modules` for large projects — discovery works inside modules automatically
