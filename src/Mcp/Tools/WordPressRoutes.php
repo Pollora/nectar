@@ -10,6 +10,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Route\Infrastructure\Models\Route as PolloraRoute;
 
 #[IsReadOnly]
 class WordPressRoutes extends Tool
@@ -22,14 +23,10 @@ class WordPressRoutes extends Tool
     {
         $routes = Route::getRoutes();
         $result = [];
-        $polloraRouteClass = 'Pollora\Route\Infrastructure\Models\Route';
-
         /** @var LaravelRoute $route */
         foreach ($routes->getRoutes() as $route) {
             $action = $route->getAction();
-            $isWordPress = $route instanceof $polloraRouteClass
-                && method_exists($route, 'isWordPressRoute')
-                && $route->isWordPressRoute(); // @phpstan-ignore-line
+            $isWordPress = $route instanceof PolloraRoute && $route->isWordPressRoute();
 
             $routeInfo = [
                 'uri' => $route->uri(),
@@ -43,9 +40,9 @@ class WordPressRoutes extends Tool
                 $routeInfo['controller'] = $action['controller'];
             }
 
-            if ($isWordPress && method_exists($route, 'hasCondition') && $route->hasCondition()) { // @phpstan-ignore-line
-                $routeInfo['wp_condition'] = $route->getCondition(); // @phpstan-ignore-line
-                $routeInfo['wp_condition_params'] = $route->getConditionParameters(); // @phpstan-ignore-line
+            if ($route instanceof PolloraRoute && $isWordPress && $route->hasCondition()) {
+                $routeInfo['wp_condition'] = $route->getCondition();
+                $routeInfo['wp_condition_params'] = $route->getConditionParameters();
             }
 
             $result[] = $routeInfo;
