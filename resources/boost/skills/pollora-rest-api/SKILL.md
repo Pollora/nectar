@@ -1,6 +1,6 @@
 ---
 name: pollora-rest-api
-description: Build WordPress REST API endpoints using Pollora WpRestRoute attributes with automatic discovery and permission management.
+description: Build WordPress REST API endpoints and AJAX handlers using Pollora WpRestRoute and Ajax attributes with automatic discovery and permission management.
 ---
 
 # Pollora REST API Development
@@ -145,6 +145,33 @@ Endpoint: `GET /api/products/search`
 'api_plugins' => ['woocommerce', 'acf-pro'],   // Selective loading
 'api_plugins' => ['*'],                        // All plugins
 ```
+
+## AJAX Handlers (admin-ajax.php)
+
+For `admin-ajax.php` actions, put `#[Ajax]` on a public method. The class is discovered and built through the container. Handlers are **logged-in users only** unless `access` says otherwise.
+
+```php
+use Pollora\Attributes\Ajax;
+use Pollora\Ajax\Domain\Model\AjaxAccess;
+
+class NewsletterHandler
+{
+    #[Ajax('subscribe')]                               // wp_ajax_subscribe (logged in)
+    public function subscribe(): void
+    {
+        check_ajax_referer('newsletter');
+        wp_send_json_success(['message' => 'Subscribed!']);
+    }
+
+    #[Ajax('load_more', access: AjaxAccess::ALL)]      // + wp_ajax_nopriv_load_more
+    public function loadMore(): void
+    {
+        wp_send_json_success([]);
+    }
+}
+```
+
+`AjaxAccess::LOGGED` (default), `AjaxAccess::ALL`, `AjaxAccess::GUEST`. The imperative form is `Ajax::listen('action', $handler)->forAllUsers()` / `->forGuestUsers()`.
 
 ## Choosing Between Approaches
 

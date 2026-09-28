@@ -37,11 +37,8 @@ class ActiveThemeInfo extends Tool
 
         $providers = $this->findProviders($themePath);
 
-        $blocks = File::isDirectory("{$themePath}/resources/blocks")
-            ? collect(File::directories("{$themePath}/resources/blocks"))
-                ->map(fn (string $dir): string => basename($dir))
-                ->all()
-            : [];
+        $blocks = $this->findBlocks("{$themePath}/resources/views/blocks");
+        $deprecatedBlocks = $this->findBlocks("{$themePath}/resources/blocks");
 
         $views = File::isDirectory("{$themePath}/resources/views")
             ? $this->listBladeTemplates("{$themePath}/resources/views")
@@ -60,6 +57,7 @@ class ActiveThemeInfo extends Tool
             'config_files' => $configFiles,
             'service_providers' => $providers,
             'blocks' => $blocks,
+            'blocks_in_deprecated_directory' => $deprecatedBlocks,
             'blade_templates' => $views,
             'has_vite' => $hasVite,
             'has_package_json' => $hasPackageJson,
@@ -67,6 +65,27 @@ class ActiveThemeInfo extends Tool
             'has_tailwind' => $hasTailwind,
             'namespace' => 'Theme\\'.str_replace('-', '', ucwords($themeName, '-')).'\\',
         ]);
+    }
+
+    /**
+     * Block slugs in a directory: each subdirectory holding a block.json.
+     *
+     * Blocks live in resources/views/blocks; resources/blocks is still
+     * registered by Pollora, with a deprecation notice, until v15.
+     *
+     * @return array<int, string>
+     */
+    private function findBlocks(string $directory): array
+    {
+        if (! File::isDirectory($directory)) {
+            return [];
+        }
+
+        return collect(File::directories($directory))
+            ->filter(fn (string $dir): bool => File::exists("{$dir}/block.json"))
+            ->map(fn (string $dir): string => basename($dir))
+            ->values()
+            ->all();
     }
 
     /**

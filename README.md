@@ -23,7 +23,7 @@ Nectar feeds AI agents with the context they need to write high-quality Pollora 
 | Feature | Description |
 |---------|-------------|
 | **AI Guidelines** | Pollora architecture, PHP attributes, WordPress routing, Blade theming — injected into your agent's context via Boost |
-| **8 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API, scheduling, and modules |
+| **9 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API and AJAX, scheduling, modules, and abilities |
 | **10 MCP Tools** | Live introspection of your WordPress & Pollora environment directly from your AI agent |
 | **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora major versions (e.g., 12→13) |
 
@@ -112,18 +112,20 @@ Skills are activated on-demand when working on specific tasks:
 | `pollora-taxonomies` | Creating custom taxonomies |
 | `pollora-theming` | Theme development (Blade, Vite, Tailwind, assets) |
 | `pollora-hooks` | Registering WordPress actions & filters |
-| `pollora-blocks` | Gutenberg block development with JSX & Tailwind |
-| `pollora-rest-api` | REST API endpoints with `#[WpRestRoute]` |
+| `pollora-blocks` | Gutenberg blocks with JSX, Blade rendering & Tailwind |
+| `pollora-rest-api` | REST API endpoints with `#[WpRestRoute]`, AJAX handlers with `#[Ajax]` |
 | `pollora-scheduling` | Scheduled tasks with `#[Schedule]` |
+| `pollora-abilities` | WordPress Abilities API with `#[Ability]` and the `Ability` facade |
 | `pollora-modules` | Laravel Modules with auto-discovery |
 
 ## Upgrade Assistance
 
-Nectar provides MCP upgrade prompts that guide AI agents through Pollora major version upgrades. Prompts are **automatically registered** when the current project version matches.
+Nectar provides MCP upgrade prompts that guide AI agents through Pollora version upgrades. Prompts are **automatically registered** when the current project version matches.
 
 | Prompt | Available when | Covers |
 |--------|---------------|--------|
 | `upgrade-pollora-v13` | Pollora 12.x detected | Loop facade removal, config registration removal, CSRF middleware rename, Vite theme.json setup, WordPress 7.0, and more |
+| `upgrade-pollora-v13-32` | Pollora 13.0 to 13.4.x detected | Dependencies and composer-patches 2, renamed commands, extracted Hook/Option/Ajax packages, Loop/Query removal, blocks in `resources/views/blocks`, skeleton files (`routes/web.php`, cache table, `.htaccess`), theme.json from `@theme` |
 
 The upgrade prompt includes:
 - Step-by-step process (assess → safety net → analyze → apply → update deps → clean up)
@@ -157,7 +159,7 @@ return [
 
 - PHP ^8.3
 - Laravel 12.x or 13.x
-- Pollora Framework (any version)
+- Pollora Framework 12.x or 13.x
 - Laravel Boost ^2.0
 
 ## License

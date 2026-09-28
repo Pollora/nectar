@@ -358,10 +358,10 @@ After upgrading, consider adopting these new features:
 Generate blocks with the new Artisan command:
 
 ```bash
-php artisan pollora:make:block my-block
+php artisan pollora:make:block my-block --theme
 ```
 
-Creates a block with `block.json`, JSX/TSX entry, and CSS — built with Vite and Tailwind CSS v4.
+Creates a block in `resources/views/blocks/my-block` with `block.json`, a JSX entry, CSS and a `render.blade.php` (dynamic by default since v13.32; `--static` for `save.jsx`) — built with Vite and Tailwind CSS v4, registered by Pollora without a service provider.
 
 ### Admin Dashboard (v13.4)
 
@@ -435,7 +435,7 @@ Pollora 13.4 introduces a `ThemeJsonResolver` that reads a Vite-built `theme.jso
 cd themes/your-theme && npm install -D @roots/vite-plugin
 ```
 
-2. **Update `vite.config.js`** to add the `wordpressThemeJson` and `copy-theme-json` plugins:
+2. **Update `vite.config.js`** to add the `wordpressThemeJson` plugin:
 
 @boostsnippet('Vite Config Update', 'js')
 // Add import
@@ -445,20 +445,11 @@ import { wordpressThemeJson } from '@roots/vite-plugin';
 wordpressThemeJson({
     baseThemeJsonPath: './theme.json',
 }),
-{
-    name: "copy-theme-json",
-    apply: "build",
-    async writeBundle(options) {
-        const fs = await import('fs/promises');
-        const src = path.join(options.dir, 'assets', 'theme.json');
-        const dest = path.resolve(__dirname, 'theme.json');
-        try {
-            await fs.copyFile(src, dest);
-            console.log('  ✓ theme.json copied to theme root');
-        } catch {}
-    },
-},
 @endboostsnippet
+
+Do **not** copy the built `theme.json` back over the theme's own (a `copy-theme-json` step in `writeBundle`). The theme's `theme.json` is the base, and it wins over `@theme` on any slug it defines: once it holds the generated palette, later changes to `app.css` never reach the editor. If a project already has that step, remove it and strip the generated `palette`, `fontSizes`, `fontFamilies` and `radiusSizes` from the base.
+
+The editor's palette, font sizes, fonts and radii come from the `@theme` block of `app.css`. Declare them in `@theme static` with concrete values, and never `@import "tailwindcss" theme(static)`, which puts Tailwind's whole default palette in the editor. See the `pollora-theming` skill.
 
 3. **Add font assets** to the Laravel Vite plugin config:
 

@@ -6,6 +6,7 @@ namespace Pollora\Nectar\Mcp;
 
 use Laravel\Mcp\Server;
 use Pollora\Nectar\Mcp\Prompts\UpgradePolloraV13\UpgradePolloraV13;
+use Pollora\Nectar\Mcp\Prompts\UpgradePolloraV1332\UpgradePolloraV1332;
 use Pollora\Nectar\Mcp\Tools\ActiveThemeInfo;
 use Pollora\Nectar\Mcp\Tools\DiscoveredComponents;
 use Pollora\Nectar\Mcp\Tools\ModulesInfo;
@@ -40,5 +41,6 @@ class Nectar extends Server
 
     protected array $prompts = [
         UpgradePolloraV13::class,
+        UpgradePolloraV1332::class,
     ];
 }

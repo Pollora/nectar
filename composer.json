@@ -13,12 +13,12 @@
     "require": {
         "php": "^8.3",
         "laravel/boost": "^2.0",
-        "pollora/framework": "*"
+        "pollora/framework": "^12.0 || ^13.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.3",
         "laravel/pint": "^1.0",
-        "orchestra/testbench": "^9.0|^10.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^2.0"
     },

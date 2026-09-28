@@ -1,20 +1,25 @@
 ## Pollora 13.x Specifics
 
-Pollora 13.x targets **Laravel 13.x** and **PHP 8.3+**.
+Pollora 13.x targets **Laravel 13.x** and **PHP 8.3+**. Since v13.32 the framework version tracks the Laravel release it targets.
 
 ### Laravel 13 Compatibility
 
-- Uses `illuminate/*` packages at `^13.0`
+- Requires `illuminate/*` `^13.32`
 - Supports Pest 3.x for testing
 - PHPStan level 5 with WordPress and Laravel extensions
 - Rector with Laravel-specific rules
 
-### WordPress 6.9 Integration
+### WordPress 7 Integration
 
-- WordPress installed at `public/cms/`
+- WordPress 7.x (`johnpbloch/wordpress` `^7.0`) installed at `public/cms/`
 - Content directory at `public/content/`
-- Full Site Editing support via `theme.json`
-- Gutenberg blocks with Vite + JSX/TSX + Tailwind CSS v4
+- Full Site Editing support via `theme.json`, generated from the theme's `@theme` tokens
+- Gutenberg blocks with Vite + JSX/TSX + Tailwind CSS v4, rendered with Blade
+- Abilities API through `pollora/abilities` (WordPress 6.9+)
+
+### Extracted Packages
+
+Some modules now live in their own packages, installed with the framework: `pollora/hook` (hook domain and adapters), `pollora/option`, `pollora/ajax`, `pollora/abilities`.
 
 ### Discovery System Enhancements
 
