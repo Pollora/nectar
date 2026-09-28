@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-28
+
+### Fixed
+
+- A project got the 12.x **and** the 13.x guidelines, whatever its framework: Boost reads every file under `resources/boost/guidelines` for a package outside Laravel's own, subdirectories included, so `12/core` and `13/core` both landed in `AGENTS.md`. One `framework.blade.php` now picks its text by the installed framework major (a branch without an alias gets the 13.x text)
+- The 12.x text printed `@@title` and `@@theme` instead of `@title` and `@theme`
+
 ## [1.1.0] - 2026-09-28
 
 ### Added
