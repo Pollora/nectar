@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-28
+
 ### Added
 
 - **Pollora 13.x → 13.32 upgrade prompt** (`upgrade-pollora-v13-32`), registered when Pollora 13.0 to 13.4.x is installed: dependencies and wp-packages, composer-patches 2 (`patches-relock`, `patches.lock.json`, checking that WordPress is patched), renamed Artisan commands, classes moved to `pollora/hook`, `pollora/option` and `pollora/ajax`, `Loop`/`Query` removal, `Translater` domain, blocks in `resources/views/blocks` and registered without a provider, skeleton files (`routes/web.php`, cache table, `.htaccess`), and the theme.json defects fixed in themes (`theme(static)`, the copy step, cyclic `@theme` values)
@@ -27,6 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `active_theme_info` listed no block for a theme made since v13.32: it read `resources/blocks` only. It reads `resources/views/blocks`, and counts a directory as a block only when it holds a `block.json`
 - `pollora-post-types` skill: `pollora:make:post-type` (was `pollora:make-post-type`)
+
+## [1.0.0] - 2026-07-02
+
+First tagged release: the content of 0.2.0.
+
+### Changed
+
+- The guidelines and skills name the Artisan commands with the colon convention (`pollora:make:theme`…)
+- The README documents the upgrade prompts and the requirements
 
 ## [0.2.0] - 2026-06-23
 
