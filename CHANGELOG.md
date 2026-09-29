@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Guidelines and the 13.32 upgrade prompt**: Pollora v13.34.0-beta requires Laravel 13.34 (`illuminate/*` `^13.34`, `^13.32` before) — the framework's version tracks Laravel's. The prompt's example constraints are `laravel/framework` `^13.34` and `pollora/framework` `^13.34@beta`
+
 - **`pollora-theming` skill and core guidelines**: block themes (Full Site Editing) are no longer ruled out. The skill documents them — `templates/` and `parts/` at the theme root, static patterns as native `patterns/*.php`, Blade patterns in `resources/views/patterns`, WordPress's pattern cache, the `template-canvas` marker — and lists the three `pollora:make:theme` templates, `magazine` (Buzz) included. Needs the Pollora beta that ships the `magazine` template
 
 ## [1.2.0] - 2026-09-28
