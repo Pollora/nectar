@@ -5,7 +5,7 @@ Pollora is a Laravel & WordPress integration framework. It replaces WordPress's 
 ### Architecture
 
 - **Laravel-first routing**: Custom routes in `routes/web.php` take priority over WordPress template hierarchy
-- **Blade templates**: No PHP template files — use `.blade.php` views exclusively
+- **Blade templates**: No PHP template files — use `.blade.php` views exclusively. The one exception is a block theme (Full Site Editing), whose `templates/*.html`, `parts/*.html` and `patterns/*.php` WordPress resolves itself (`pollora:make:theme` template `magazine`)
 - **DDD structure**: Framework modules use Domain/Application/Infrastructure layers
 - **Auto-discovery**: Components are registered automatically via PHP 8 attributes — no manual `register_post_type()` or `add_action()` calls needed
 
