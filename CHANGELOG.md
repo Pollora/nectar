@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`pollora-theming` skill and core guidelines**: block themes (Full Site Editing) are no longer ruled out. The skill documents them — `templates/` and `parts/` at the theme root, static patterns as native `patterns/*.php`, Blade patterns in `resources/views/patterns`, WordPress's pattern cache, the `template-canvas` marker — and lists the three `pollora:make:theme` templates, `magazine` (Buzz) included. Needs the Pollora beta that ships the `magazine` template
+
 ## [1.2.0] - 2026-09-28
 
 ### Changed

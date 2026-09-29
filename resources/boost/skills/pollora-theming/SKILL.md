@@ -1,6 +1,6 @@
 ---
 name: pollora-theming
-description: Develop Pollora themes with Blade templates, Vite asset bundling, Tailwind CSS, and WordPress block editor integration.
+description: Develop Pollora themes with Blade templates or as Full Site Editing block themes, Vite asset bundling, Tailwind CSS, and WordPress block editor integration.
 ---
 
 # Pollora Theme Development
@@ -16,7 +16,15 @@ Generate a new theme:
 php artisan pollora:make:theme my-theme
 ```
 
-This creates a complete theme at `themes/my-theme/` and auto-activates it.
+This creates a complete theme at `themes/my-theme/` and auto-activates it. The command offers three templates:
+
+| Template | Repository | What it is |
+|---|---|---|
+| `default` | `pollora/theme-default` | Blade starter: Vite, Tailwind CSS |
+| `ecommerce` | `pollora/theme-apiary` | WooCommerce storefront, Blade + Alpine.js |
+| `magazine` | `pollora/theme-buzz` | Full Site Editing block theme, see below |
+
+Skip the prompt with `--repository=pollora/theme-buzz` (any `owner/repo` works).
 
 ## Theme Structure
 
@@ -199,6 +207,39 @@ return [
 
 Roles resolve from common slugs (`primary`, `surface`, `foreground`, `outline`…). Modules and plugins can take over with the `pollora/login/palette`, `pollora/login/logo`, `pollora/login/styles` and `pollora/login/credit` filters.
 
+## Block Themes (Full Site Editing)
+
+A theme can be a WordPress block theme instead of a Blade one: its templates are `templates/*.html`, edited in the Site Editor. Pollora renders it with no configuration — when no Blade view answers, its fallback lets WordPress resolve the block template itself, with the right HTTP status (a 404 answers 404, `error404` on `<body>`). Generate one with the `magazine` template.
+
+One rule decides where a file goes: **the theme root holds what WordPress reads itself; `resources/views/` holds Blade.**
+
+```
+themes/my-journal/
+├── templates/*.html         # Block templates (index, single, page, archive, search, 404…) — WordPress reads them
+├── parts/*.html             # Template parts (header, footer)
+├── patterns/*.php           # Static patterns, registered by WordPress itself
+├── resources/views/patterns/*.blade.php   # Patterns that need Laravel, registered by Pollora
+├── theme.json               # The design system; the build adds the @theme colours
+└── style.css
+```
+
+- `templates/` and `parts/` must sit at the theme root: WordPress has no setting to move them.
+- A static pattern is a native WordPress one: `patterns/*.php`, block markup under a docblock header (`Title`, `Slug`, `Categories`, `Inserter`, `Block Types`). WordPress reads **only `.php`** in `patterns/` — an `.html` there is silently ignored. The same layout the Site Editor exports.
+- A pattern that needs Laravel (config, a helper, a computed value) is a Blade view in `resources/views/patterns/*.blade.php`, its header in a Blade comment:
+
+```blade
+{{--
+  Title: Colophon
+  Slug: my-journal/colophon
+  Categories: my-journal/patterns
+  Inserter: false
+--}}
+```
+- A template references a pattern with `<!-- wp:pattern {"slug":"my-journal/masthead"} /-->`: templates stay thin, the markup lives in patterns.
+- WordPress caches a theme's `patterns/` list: a new file appears once the cache is cleared (`wp eval 'wp_get_theme()->delete_pattern_cache();'`) or at once with `WP_DEVELOPMENT_MODE=theme`.
+- Assets work as in any Pollora theme (`Asset::add(...)->useVite()`); a Vite entry is enqueued as a script module, after WordPress's import map.
+- Don't add `Route::wp()` routes for pages the block templates render: a route answers first and bypasses them.
+
 ## Debugging Templates
 
 With `WP_DEBUG` on, each page rendered through the template hierarchy says which template answered:
@@ -210,9 +251,11 @@ curl -s https://site.test/some-page | grep pollora:template
 
 Responses from `Route::wp()` and Laravel routes carry no marker.
 
+In a block theme the marker always reads `template="template-canvas"` (WordPress renders every block template through `wp-includes/template-canvas.php`): tell templates apart by the `<body>` classes instead (`single-post`, `search-results`, `error404`…).
+
 ## Important Notes
 
-- **Never create WordPress PHP template files** — use Blade exclusively
+- **Never create WordPress PHP template files** — use Blade exclusively. The exception is a block theme, whose `templates/*.html`, `parts/*.html` and `patterns/*.php` WordPress resolves itself (see Block Themes)
 - Theme providers in `app/Providers/` are auto-discovered
 - Design tokens (colours, font sizes, fonts, radii) go in the `@theme static` block of `app.css`, with concrete values; `wordpressThemeJson` writes them into the built `theme.json` the editor reads. Never `@import "tailwindcss" theme(static)` (it puts Tailwind's whole palette in the editor), never `var(--wp--preset--…)` inside `@theme` (a cycle once copied)
 - The root `theme.json` is the base: layout, spacing, `fontFace`, editor settings. A slug defined there wins over `@theme`; a whole family can be taken out of the generation with `disableTailwindColors` / `disableTailwindFontSizes` / `disableTailwindFonts` / `disableTailwindBorderRadius`
