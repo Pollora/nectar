@@ -96,7 +96,7 @@ The discovery system uses `spatie/php-structure-discoverer` for attribute scanni
 @verbatim
 ## Pollora 13.x Specifics
 
-Pollora 13.x targets **Laravel 13.x** and **PHP 8.3+**. Since v13.32 the framework version tracks the Laravel release it targets.
+Pollora 13.x targets **Laravel 13.x**. The framework supports **PHP 8.3+**, but a new project needs **PHP 8.4**: the skeleton's `composer.lock` ships Symfony 8, which requires it. Since v13.32 the framework version tracks the Laravel release it targets.
 
 ### Laravel 13 Compatibility
 
