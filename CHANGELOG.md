@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-30
+
 ### Changed
 
-- **Core guidelines**: `pollora:doctor`, to run first when something fails without an error (Pollora/framework#365)
+- **Core guidelines**: `pollora:doctor`, to run first when something fails without an error (Pollora/framework#365). Needs Pollora 13.34.0-beta.2
 
-- **`pollora-theming` skill**: `pollora:make:theme` no longer always activates the generated theme — only on a site with no usable theme; `--activate` / `--no-activate` (Pollora/framework#364)
+- **`pollora-theming` skill**: `pollora:make:theme` no longer always activates the generated theme — only on a site with no usable theme; `--activate` / `--no-activate` (Pollora/framework#364). Needs Pollora 13.34.0-beta.2
 
 ## [1.3.0] - 2026-09-29
 
