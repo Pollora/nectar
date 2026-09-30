@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`pollora-theming` skill**: `pollora:make:theme` no longer always activates the generated theme — only on a site with no usable theme; `--activate` / `--no-activate` (Pollora/framework#364)
+
 ## [1.3.0] - 2026-09-29
 
 ### Changed
