@@ -126,7 +126,7 @@ Write `<InnerBlocks />` in the template where the inner blocks go (ACF-style). I
 - One list per block: only the first tag gets the inner blocks; further tags are dropped.
 - The inner blocks are saved in `post_content`; the rest of the block is not, so template changes reach existing blocks.
 - In the preview, `$content` is empty and the tag stays for the editor; `<script>` and `on…` attributes are left out. Use `$isPreview` for editor-only hints.
-- Requires the framework after v13.32.0-beta.8 (the runtime above). Do not use `ServerSideRender` or a hand-written `InnerBlocks` edit for a Blade block with inner blocks.
+- Requires Pollora 13.34 (the runtime above). Do not use `ServerSideRender` or a hand-written `InnerBlocks` edit for a Blade block with inner blocks.
 
 ## Registration
 

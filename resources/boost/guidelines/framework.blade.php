@@ -100,7 +100,7 @@ Pollora 13.x targets **Laravel 13.x** and **PHP 8.3+**. Since v13.32 the framewo
 
 ### Laravel 13 Compatibility
 
-- Requires `illuminate/*` `^13.34` since v13.34.0-beta (`^13.32` before)
+- Requires `illuminate/*` `^13.34`; v13.34.0 is the first stable release on it
 - Supports Pest 3.x for testing
 - PHPStan level 5 with WordPress and Laravel extensions
 - Rector with Laravel-specific rules

@@ -39,12 +39,12 @@ Dependencies first, then code, then the skeleton files, then themes.
 "require": {
     "johnpbloch/wordpress": "^7.1",
     "laravel/framework": "^13.34",
-    "pollora/framework": "^13.34@beta"
+    "pollora/framework": "^13.34"
 }
 ```
 
 - The framework's version tracks Laravel's: from v13.34.0-beta it requires `illuminate/*` `^13.34` (the 13.32 betas required `^13.32`). Upgrade Laravel first if needed
-- While it is in beta, the constraint carries `@beta`: `^13.34@beta`
+- v13.34.0 is a stable release: the constraint needs no `@beta` flag
 - WordPress plugins and themes come from wp-packages instead of wpackagist. Replace the repository and rename the packages (`wpackagist-plugin/x` → `wp-plugin/x`, `wpackagist-theme/x` → `wp-theme/x`):
 
 ```json
