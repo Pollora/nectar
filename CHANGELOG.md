@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Core guidelines**: a new Pollora project needs PHP 8.4 (the skeleton's lock ships Symfony 8); the framework itself still supports 8.3 (Pollora/framework#301)
+
 ## [1.3.2] - 2026-09-30
 
 ### Changed
