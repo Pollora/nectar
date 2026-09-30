@@ -121,6 +121,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:make:model` / `pollora:make:wp-cli` — Generate an Eloquent model or a WP-CLI command class
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:status` — Show framework status
+- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each; the same checks are in Tools › Site Health. **Run it first when something fails without an error**
 
 Commands use the colon convention since v13.32; the former dashed names (`pollora:make-theme`…) still work as aliases.
 
