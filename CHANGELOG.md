@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-09-30
+
 ### Changed
 
 - **13.32 upgrade prompt, core guidelines and `pollora-blocks` skill**: Pollora v13.34.0 is a stable release — the prompt's constraint is `pollora/framework` `^13.34`, with no `@beta` flag
