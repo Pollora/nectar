@@ -16,7 +16,7 @@ Generate a new theme:
 php artisan pollora:make:theme my-theme
 ```
 
-This creates a complete theme at `themes/my-theme/` and auto-activates it. The command offers three templates:
+This creates a complete theme at `themes/my-theme/`. It is activated when the site has no usable theme (a first install); a site with one keeps it unless asked otherwise — the question defaults to "no", so `--no-interaction` never replaces a working theme. `--activate` / `--no-activate` decide without asking. The command offers three templates:
 
 | Template | Repository | What it is |
 |---|---|---|
