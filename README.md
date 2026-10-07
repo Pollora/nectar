@@ -48,9 +48,9 @@ php artisan boost:update
 | Feature | Description |
 |---------|-------------|
 | **AI Guidelines** | Pollora architecture, PHP attributes, WordPress routing, Blade theming — injected into your agent's context via Boost |
-| **9 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API and AJAX, scheduling, modules, and abilities |
+| **12 Agent Skills** | On-demand knowledge for post types, taxonomies, typed meta, roles, theming, hooks, blocks and Block Bindings, REST API and AJAX, scheduling, modules, and abilities |
 | **10 MCP Tools** | Live introspection of your WordPress & Pollora environment directly from your AI agent |
-| **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora versions (12 → 13, 13.x → 13.32) |
+| **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora versions (12 → 13, 13.x → 13.32 and later) |
 
 ## MCP Server
 
@@ -115,6 +115,9 @@ Skills are activated on-demand when working on specific tasks:
 | `pollora-rest-api` | REST API endpoints with `#[WpRestRoute]`, AJAX handlers with `#[Ajax]` |
 | `pollora-scheduling` | Scheduled tasks with `#[Schedule]` |
 | `pollora-abilities` | WordPress Abilities API with `#[Ability]` and the `Ability` facade |
+| `pollora-typed-meta` | Post, term, user and comment meta as typed properties with `#[Meta]`, `Meta::of()`, `pollora:meta:audit` |
+| `pollora-roles` | Capabilities through Laravel's Gate, roles declared with `#[Role]`, `#[ModifyRole]`, `#[CapabilitySet]`, `pollora:roles:*` |
+| `pollora-block-bindings` | `#[BlockBinding]` sources, `pollora/post-meta` and the other sources for core blocks, bindable Blade blocks |
 | `pollora-modules` | Laravel Modules with auto-discovery |
 
 ## Upgrade Assistance

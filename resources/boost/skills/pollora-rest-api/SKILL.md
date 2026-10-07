@@ -91,8 +91,9 @@ Endpoint: `GET /wp-json/my-theme/v1/documents/18`
 Use built-in permission classes or create custom ones:
 
 ```php
-use Pollora\Attributes\WpRestRoute\Permissions\IsAdmin;
-use Pollora\Attributes\WpRestRoute\Permissions\IsLoggedIn;
+use Pollora\WpRest\Permissions\Can;
+use Pollora\WpRest\Permissions\IsAdmin;
+use Pollora\WpRest\Permissions\IsLoggedIn;
 
 // Built-in permissions
 #[WpRestRoute(
@@ -102,8 +103,16 @@ use Pollora\Attributes\WpRestRoute\Permissions\IsLoggedIn;
 )]
 class SettingsAPI {}
 
+// A capability (v13.34.5+): a string or a #[CapabilitySet] enum case
+#[WpRestRoute(namespace: 'my-theme/v1', route: 'reports', permissionCallback: new Can('export_attendees'))]
+class ReportsAPI {}
+
+// A meta capability on the object in the request: edit_post with the `id` parameter
+#[Method('PUT', permissionCallback: new Can('edit_post', parameter: 'id'))]
+public function update(int $id): array {}
+
 // Custom permission
-use Pollora\WpRest\Domain\Contracts\Permission;
+use Pollora\Attributes\WpRestRoute\Permission;
 
 class CanManageBooks implements Permission
 {
@@ -122,6 +131,8 @@ class CanManageBooks implements Permission
 )]
 class BooksAPI {}
 ```
+
+A `Can` refusal answers 401 to a guest and 403 to a logged-in user. Prefer `Can` to a custom class that only calls `current_user_can()` (see the `pollora-roles` skill).
 
 ## Theme API Routes (Lightweight Mode)
 

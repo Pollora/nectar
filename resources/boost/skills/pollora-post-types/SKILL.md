@@ -123,4 +123,6 @@ public function show(\WP_Post $post): \Illuminate\View\View
 - Run `php artisan discovery:clear` after creating a new post type class during development
 - Labels are auto-generated from the class name if not specified
 - The slug is derived from the `#[PostType('slug')]` attribute parameter
+- Custom fields: declare them as `#[Meta]` typed properties on the same class (see the `pollora-typed-meta` skill), not with `register_meta()`
+- `#[CapabilityType]` + `#[MapMetaCap]` give the post type its own capabilities, which no role has except the super roles: grant them with `#[GrantsPostType]` (see the `pollora-roles` skill)
 - Generate a post type with `php artisan pollora:make:post-type`

@@ -100,7 +100,7 @@ Pollora 13.x targets **Laravel 13.x**. The framework supports **PHP 8.3+**, but 
 
 ### Laravel 13 Compatibility
 
-- Requires `illuminate/*` `^13.34`; v13.34.0 is the first stable release on it
+- Requires `illuminate/*` `^13.35` since v13.35.0 (`^13.34` before); v13.34.0 is the first stable release
 - Supports Pest 3.x for testing
 - PHPStan level 5 with WordPress and Laravel extensions
 - Rector with Laravel-specific rules
@@ -112,6 +112,14 @@ Pollora 13.x targets **Laravel 13.x**. The framework supports **PHP 8.3+**, but 
 - Full Site Editing support via `theme.json`, generated from the theme's `@theme` tokens
 - Gutenberg blocks with Vite + JSX/TSX + Tailwind CSS v4, rendered with Blade
 - Abilities API through `pollora/abilities` (WordPress 6.9+)
+
+### Typed Meta, Roles and Block Bindings
+
+Experimental, from v13.34.4 (meta, roles) and v13.34.6 (Block Bindings): `#[Meta]` typed properties read through `Meta::of()` and the `Pollora\Models` models, roles declared with `#[Role]` / `#[ModifyRole]` / `#[CapabilitySet]` and injected on every request, and `#[BlockBinding]` sources plus `pollora/post-meta`, `term-meta`, `author-meta` and `option` for core blocks. See the `pollora-typed-meta`, `pollora-roles` and `pollora-block-bindings` skills; `pollora:doctor` checks all three.
+
+### Request Lifecycle
+
+WordPress is loaded from a service provider's `boot()`; `wp()` runs there. Since v13.35.1, `template_redirect` (then `pollora_loaded`) fires once every provider has booted, still before routing, so a plugin or theme rendering a view from `template_redirect` gets the theme's view composers and shared data. Code that relied on `template_redirect` having fired during the providers' boot must move to a later hook.
 
 ### Extracted Packages
 
