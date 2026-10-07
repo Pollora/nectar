@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-07
+
 ### Added
 
 - **Skills** `pollora-typed-meta`, `pollora-roles` and `pollora-block-bindings`: `#[Meta]` and `Meta::of()`, `#[Role]` / `#[ModifyRole]` / `#[CapabilitySet]` and Laravel's Gate, `#[BlockBinding]` and the `pollora/*` sources, with their commands and doctor checks (framework v13.34.4 to v13.35)
