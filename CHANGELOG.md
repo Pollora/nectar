@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Skill** `pollora-hooks`: asynchronous actions — `->async()` and `#[Async]`, their options, what travels and what is refused, `capture()` / `when()`, drivers and what must run them, the rules for a replayable handler, `Async::fake()`, `pollora:async:list` and `pollora:make:action --async`
+- **Core and 13.x guidelines**: `#[Async]` in the attribute snippet, the `pollora:async:list` command, the async checks of `pollora:doctor`
+
 ## [1.4.0] - 2026-10-07
 
 ### Added
