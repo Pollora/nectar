@@ -53,6 +53,11 @@ public function onInit(): void {}
 #[Filter('the_content')]
 public function filterContent(string $content): string {}
 
+// Asynchronous action (v13.35.2+) — queued, run after the request by a queue worker, Action Scheduler or WP-Cron
+#[Action('save_post_event')]
+#[Async(tries: 3, unique: true)]
+public function syncToCrm(int $postId): void {}
+
 // REST API endpoints
 #[WpRestRoute(namespace: 'app/v1', route: 'items')]
 class ItemAPI {}
@@ -139,7 +144,8 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:make:plugin` / `pollora:plugin:list` / `pollora:plugin:status` — Plugins
 - `pollora:make:block` — Generate a Gutenberg block (dynamic Blade by default, `--static` for `save.jsx`)
 - `pollora:make:post-type` / `pollora:make:taxonomy` — Generate post type and taxonomy classes
-- `pollora:make:action` / `pollora:make:filter` / `pollora:make:hook` — Generate hook classes
+- `pollora:make:action` / `pollora:make:filter` / `pollora:make:hook` — Generate hook classes (`pollora:make:action --async` adds `#[Async]`)
+- `pollora:async:list` — Asynchronous actions, their driver and options, and where the default driver comes from
 - `pollora:make:model` / `pollora:make:wp-cli` — Generate an Eloquent model or a WP-CLI command class
 - `pollora:make:role` / `pollora:make:binding` — Generate a `#[Role]` class or a `#[BlockBinding]` source
 - `pollora:meta:list` / `pollora:meta:audit` — List typed meta; read every stored value and name those that cannot be read as their type (exits 1, for CI)
@@ -148,7 +154,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:binding:list` — Binding sources, their fields, and the blocks WordPress lets bind
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:status` — Show framework status
-- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register and users left with a removed role; the same checks are in Tools › Site Health. **Run it first when something fails without an error**
+- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register, users left with a removed role, and asynchronous actions nothing will run (ignored `#[Async]`, unavailable driver, overdue WP-Cron, jobs without a worker); the same checks are in Tools › Site Health. **Run it first when something fails without an error**
 
 Commands use the colon convention since v13.32; the former dashed names (`pollora:make-theme`…) still work as aliases.
 

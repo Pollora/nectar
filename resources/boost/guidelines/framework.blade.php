@@ -119,6 +119,8 @@ Experimental, from v13.34.4 (meta, roles) and v13.34.6 (Block Bindings): `#[Meta
 
 ### Request Lifecycle
 
+Asynchronous actions, from v13.35.2 (`pollora/hook` `^1.4`): `Action::add(...)->async()` or `#[Async]` next to `#[Action]` queues the handler instead of running it in the request. The default driver `auto` takes the Laravel queue only once `HOOKS_ASYNC_CONNECTION` is set, then Action Scheduler, then WP-Cron; Pollora sets `DISABLE_WP_CRON`, so WP-Cron and Action Scheduler need a system cron, the queue a worker. A handler may run twice and in any order: make it safe to replay. See the `pollora-hooks` skill.
+
 WordPress is loaded from a service provider's `boot()`; `wp()` runs there. Since v13.35.1, `template_redirect` (then `pollora_loaded`) fires once every provider has booted, still before routing, so a plugin or theme rendering a view from `template_redirect` gets the theme's view composers and shared data. Code that relied on `template_redirect` having fired during the providers' boot must move to a later hook.
 
 ### Extracted Packages
