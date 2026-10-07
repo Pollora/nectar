@@ -38,13 +38,14 @@ Dependencies first, then code, then the skeleton files, then themes.
 ```json
 "require": {
     "johnpbloch/wordpress": "^7.1",
-    "laravel/framework": "^13.34",
-    "pollora/framework": "^13.34"
+    "laravel/framework": "^13.35",
+    "pollora/framework": "^13.35"
 }
 ```
 
-- The framework's version tracks Laravel's: from v13.34.0-beta it requires `illuminate/*` `^13.34` (the 13.32 betas required `^13.32`). Upgrade Laravel first if needed
-- v13.34.0 is a stable release: the constraint needs no `@beta` flag
+- The framework's version tracks Laravel's: v13.35 requires `illuminate/*` `^13.35` (v13.34 required `^13.34`, the 13.32 betas `^13.32`). Upgrade Laravel first if needed
+- Since v13.35.1, `template_redirect` fires once every service provider has booted, still before routing: code that checked `did_action('template_redirect')` from a provider's `boot()` must move to a later hook
+- Since v13.34.0 the releases are stable: the constraint needs no `@beta` flag
 - WordPress plugins and themes come from wp-packages instead of wpackagist. Replace the repository and rename the packages (`wpackagist-plugin/x` → `wp-plugin/x`, `wpackagist-theme/x` → `wp-theme/x`):
 
 ```json

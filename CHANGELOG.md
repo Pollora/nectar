@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Skills** `pollora-typed-meta`, `pollora-roles` and `pollora-block-bindings`: `#[Meta]` and `Meta::of()`, `#[Role]` / `#[ModifyRole]` / `#[CapabilitySet]` and Laravel's Gate, `#[BlockBinding]` and the `pollora/*` sources, with their commands and doctor checks (framework v13.34.4 to v13.35)
+- **Core guidelines**: the three features in the attribute snippet and the conventions, the `Meta` facade, and the commands `pollora:make:role`, `pollora:make:binding`, `pollora:meta:list|audit`, `pollora:roles:list|show|prune|import|dump`, `pollora:binding:list`
+- **13.x guidelines**: typed meta, roles and Block Bindings; the request lifecycle (`template_redirect` after every provider has booted, since v13.35.1)
+
+### Changed
+
+- **Upgrade prompt** and 13.x guidelines: `^13.35` (Laravel 13.35)
+- **REST skill**: the `Can` permission (a capability, a `#[CapabilitySet]` case, a meta capability on a request parameter)
+
+### Fixed
+
+- **REST skill**: the built-in permissions are imported from `Pollora\WpRest\Permissions` and the contract from `Pollora\Attributes\WpRestRoute\Permission`; the namespaces it gave did not exist
+
 ## [1.3.4] - 2026-10-07
 
 ### Changed

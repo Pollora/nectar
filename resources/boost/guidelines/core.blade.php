@@ -69,6 +69,27 @@ public function loadMore(): void {}
 #[Ability(name: 'acme/create-post', description: 'Creates a post.', category: 'acme-content')]
 final class CreatePost implements AbilityHandler {}
 
+// Typed meta (v13.34.4+, experimental) — a typed property, on the post type or taxonomy class
+#[PostType('event')]
+class Event
+{
+    #[Meta(showInRest: true)]
+    public int $capacity = 0;      // key: capacity, read with Meta::of(Event::class, $id)->capacity
+}
+
+// Roles declared in code (v13.34.4+, experimental) — injected on every request, never stored
+#[Role('event_manager', label: 'Event manager', inherits: 'author')]
+#[GrantsPostType(Event::class, Access::Editor)]
+final class EventManager {}
+
+// Block Bindings sources (v13.34.6+, experimental) — fields a core block's attribute binds to
+#[BlockBinding('acme/event', postTypes: 'event')]
+final class EventBinding
+{
+    #[BindingField(label: 'Remaining seats')]
+    public function remainingSeats(BindingContext $context): string {}
+}
+
 // Keep a class out of discovery entirely (or all but some: except: [...])
 #[SkipDiscovery]
 class InternalHelper {}
@@ -102,10 +123,11 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - **Never call WordPress registration functions directly** — use attributes and discovery
 - **Use Blade directives** from Sage Directives: `@posts`, `@title`, `@content`, `@permalink`, `@published`
 - **WordPress objects** (`WP_Post`, `WP_Query`, `WP_User`) are auto-injected via type hints in controller methods
-- **Facades**: `Action`, `Filter`, `Ajax`, `Asset`, `Theme`, `PostType`, `Taxonomy`, `Option`, `Ability`, `PostQuery`, `MetaQuery`, `TaxQuery`, `Mail`, `Constant`. There is no `Loop` or `Query` facade: use Sage Directives in Blade, WordPress functions in PHP
+- **Facades**: `Action`, `Filter`, `Ajax`, `Asset`, `Theme`, `PostType`, `Taxonomy`, `Option`, `Meta`, `Ability`, `PostQuery`, `MetaQuery`, `TaxQuery`, `Mail`, `Constant`. There is no `Loop` or `Query` facade: use Sage Directives in Blade, WordPress functions in PHP
 - **Translations**: `__('Text', 'my-domain')` goes to WordPress's catalogues; `__('key', ['name' => $x])` goes to Laravel; `__('Text')` tries Laravel, then WordPress's `default` domain
 - **Blocks**: live in `resources/views/blocks/{slug}`, render with `render.blade.php` by default, and are registered by Pollora — never write a `BlocksServiceProvider`; `<InnerBlocks />` in `render.blade.php` marks where inner blocks go, edited in place in the editor (see the `pollora-blocks` skill)
 - **Which template answered?** With `WP_DEBUG` on, every page carries `<!-- pollora:template="single" path="themes/x/resources/views/single.blade.php" -->` (hierarchy responses only, not `Route::wp()` or Laravel routes)
+- **Meta, roles, bindings**: declare a meta with `#[Meta]` on a typed property rather than calling `register_meta()` and casting `get_post_meta()` by hand (`pollora-typed-meta` skill); declare roles with `#[Role]` / `#[ModifyRole]` rather than `add_role()`, and check a capability (`can:`, `@can`) rather than a role (`pollora-roles` skill); bind core blocks to a `#[BlockBinding]` source or `pollora/post-meta` before writing a custom block (`pollora-block-bindings` skill)
 - **CSRF**: WordPress endpoints are excluded from Laravel CSRF — WordPress uses its own nonce system
 - **Modules**: Use `nwidart/laravel-modules` for large projects — discovery works inside modules automatically
 
@@ -119,9 +141,14 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:make:post-type` / `pollora:make:taxonomy` — Generate post type and taxonomy classes
 - `pollora:make:action` / `pollora:make:filter` / `pollora:make:hook` — Generate hook classes
 - `pollora:make:model` / `pollora:make:wp-cli` — Generate an Eloquent model or a WP-CLI command class
+- `pollora:make:role` / `pollora:make:binding` — Generate a `#[Role]` class or a `#[BlockBinding]` source
+- `pollora:meta:list` / `pollora:meta:audit` — List typed meta; read every stored value and name those that cannot be read as their type (exits 1, for CI)
+- `pollora:roles:list` / `pollora:roles:show {role}` — Roles with their origin; the effective capabilities of one role and where each comes from
+- `pollora:roles:prune` / `pollora:roles:import {role}` / `pollora:roles:dump` — Clean up roles removed from the code, turn a stored role into a `#[Role]` class, write the code's roles to the database; dry run unless `--force`
+- `pollora:binding:list` — Binding sources, their fields, and the blocks WordPress lets bind
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:status` — Show framework status
-- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each; the same checks are in Tools › Site Health. **Run it first when something fails without an error**
+- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register and users left with a removed role; the same checks are in Tools › Site Health. **Run it first when something fails without an error**
 
 Commands use the colon convention since v13.32; the former dashed names (`pollora:make-theme`…) still work as aliases.
 
