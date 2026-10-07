@@ -1,7 +1,7 @@
 {
     "name": "pollora/nectar",
     "description": "AI-powered development context for Pollora — guidelines, skills, and MCP tools for AI agents.",
-    "license": "GPL-2.0-or-later",
+    "license": "MIT",
     "authors": [
         {
             "name": "Olivier Gorzalka",

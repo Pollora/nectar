@@ -164,4 +164,4 @@ return [
 
 ## License
 
-Nectar is open-sourced software licensed under the [GPL-2.0-or-later](LICENSE).
+Nectar is open-sourced software licensed under the [MIT license](LICENSE).
