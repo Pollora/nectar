@@ -1,33 +1,23 @@
 <p align="center">
-  <a href="https://github.com/Pollora/nectar">
-    <img src="resources/images/pollora-logo.svg" width="400" alt="Pollora">
+  <a href="https://pollora.dev">
+    <img src="https://raw.githubusercontent.com/Pollora/.github/main/brand/banners/nectar.png" width="100%" alt="Nectar: AI development context for Pollora">
   </a>
-</p>
-
-<p align="center">
-  <strong>Nectar</strong> — AI-powered development context for Pollora
 </p>
 
 <p align="center">
   <a href="https://packagist.org/packages/pollora/nectar"><img src="https://img.shields.io/packagist/v/pollora/nectar" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/pollora/nectar"><img src="https://img.shields.io/packagist/dt/pollora/nectar" alt="Total Downloads"></a>
-  <a href="https://packagist.org/packages/pollora/nectar"><img src="https://img.shields.io/packagist/l/pollora/nectar" alt="License"></a>
+  <a href="https://github.com/Pollora/nectar/actions/workflows/ci.yml"><img src="https://github.com/Pollora/nectar/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Pollora/nectar" alt="License"></a>
 </p>
 
-## About Nectar
+Nectar gives AI coding agents the context they need to write correct Pollora code. Built on [Laravel Boost](https://laravel.com/docs/boost), it adds Pollora guidelines, on-demand agent skills and an MCP server that reads your live WordPress and Pollora environment. Your agent stops guessing at `register_post_type()` calls and uses the framework's attributes, routes and commands instead.
 
-Nectar feeds AI agents with the context they need to write high-quality Pollora code. Built on top of [Laravel Boost](https://laravel.com/docs/boost), it provides **AI guidelines**, **agent skills**, and a **dedicated MCP server** tailored to the Pollora framework and WordPress integration.
-
-### What it provides
-
-| Feature | Description |
-|---------|-------------|
-| **AI Guidelines** | Pollora architecture, PHP attributes, WordPress routing, Blade theming — injected into your agent's context via Boost |
-| **9 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API and AJAX, scheduling, modules, and abilities |
-| **10 MCP Tools** | Live introspection of your WordPress & Pollora environment directly from your AI agent |
-| **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora major versions (e.g., 12→13) |
+> Part of [Pollora](https://pollora.dev), the Laravel framework for WordPress. Install it as a dev dependency in any Pollora project.
 
 ## Installation
+
+Requires PHP 8.3+, Laravel 12.x or 13.x, Pollora Framework 12.x or 13.x and Laravel Boost 2.x.
 
 ```bash
 composer require pollora/nectar --dev
@@ -52,6 +42,15 @@ Then update:
 ```bash
 php artisan boost:update
 ```
+
+## What it provides
+
+| Feature | Description |
+|---------|-------------|
+| **AI Guidelines** | Pollora architecture, PHP attributes, WordPress routing, Blade theming — injected into your agent's context via Boost |
+| **9 Agent Skills** | On-demand knowledge for post types, taxonomies, theming, hooks, blocks, REST API and AJAX, scheduling, modules, and abilities |
+| **10 MCP Tools** | Live introspection of your WordPress & Pollora environment directly from your AI agent |
+| **Upgrade Prompts** | Step-by-step MCP prompts for upgrading between Pollora versions (12 → 13, 13.x → 13.32) |
 
 ## MCP Server
 
@@ -125,7 +124,7 @@ Nectar provides MCP upgrade prompts that guide AI agents through Pollora version
 | Prompt | Available when | Covers |
 |--------|---------------|--------|
 | `upgrade-pollora-v13` | Pollora 12.x detected | Loop facade removal, config registration removal, CSRF middleware rename, Vite theme.json setup, WordPress 7.0, and more |
-| `upgrade-pollora-v13-32` | Pollora 13.0 to 13.4.x detected | Dependencies and composer-patches 2, renamed commands, extracted Hook/Option/Ajax packages, Loop/Query removal, blocks in `resources/views/blocks`, skeleton files (`routes/web.php`, cache table, `.htaccess`), theme.json from `@theme` |
+| `upgrade-pollora-v13-32` | Pollora 13.x before 13.32 detected | Dependencies and composer-patches 2, renamed commands, extracted Hook/Option/Ajax packages, Loop/Query removal, blocks in `resources/views/blocks`, skeleton files (`routes/web.php`, cache table, `.htaccess`), theme.json from `@theme` |
 
 The upgrade prompt includes:
 - Step-by-step process (assess → safety net → analyze → apply → update deps → clean up)
@@ -155,13 +154,22 @@ return [
 ];
 ```
 
-## Requirements
+## Documentation
 
-- PHP ^8.3
-- Laravel 12.x or 13.x
-- Pollora Framework 12.x or 13.x
-- Laravel Boost ^2.0
+The full guide is on [pollora.dev/nectar/overview](https://pollora.dev/nectar/overview/).
+
+## Testing
+
+```bash
+composer test
+```
+
+Runs Pint, PHPStan and the Pest suite.
+
+## Contributing
+
+Contributions are welcome: see the [contributing guide](https://github.com/Pollora/.github/blob/main/CONTRIBUTING.md). Report security issues privately, as described in the [security policy](https://github.com/Pollora/.github/blob/main/SECURITY.md).
 
 ## License
 
-Nectar is open-sourced software licensed under the [GPL-2.0-or-later](LICENSE).
+Nectar is open-source software licensed under the [MIT license](LICENSE). © [RuBee group](https://rubee.group)

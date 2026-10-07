@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **License**: Nectar is now MIT, like the framework, the skeleton and the other Pollora packages (was GPL-2.0-or-later)
+- **README**: Pollora banner and badges, requirements up front, link to the pollora.dev guide, contributing and security footer
+
 ## [1.3.3] - 2026-10-02
 
 ### Changed
