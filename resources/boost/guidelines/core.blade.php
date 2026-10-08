@@ -134,7 +134,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - **Which template answered?** With `WP_DEBUG` on, every page carries `<!-- pollora:template="single" path="themes/x/resources/views/single.blade.php" -->` (hierarchy responses only, not `Route::wp()` or Laravel routes)
 - **Meta, roles, bindings**: declare a meta with `#[Meta]` on a typed property rather than calling `register_meta()` and casting `get_post_meta()` by hand (`pollora-typed-meta` skill); declare roles with `#[Role]` / `#[ModifyRole]` rather than `add_role()`, and check a capability (`can:`, `@can`) rather than a role (`pollora-roles` skill); bind core blocks to a `#[BlockBinding]` source or `pollora/post-meta` before writing a custom block (`pollora-block-bindings` skill)
 - **CSRF**: WordPress endpoints are excluded from Laravel CSRF — WordPress uses its own nonce system
-- **Modules**: Use `nwidart/laravel-modules` for large projects — discovery works inside modules automatically
+- **Modules**: Use `nwidart/laravel-modules` for large projects — `pollora:make:module` creates a lean module (no provider: discovery works inside modules), built with `@pollora/vite-config`; switch modules with `module:enable|disable` or Plugins › Modules (see the `pollora-modules` skill)
 
 ### Available Artisan Commands
 
@@ -142,7 +142,9 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:env:setup` — Install and configure WordPress
 - `pollora:make:theme` / `pollora:theme:delete` / `pollora:theme:status` — Themes
 - `pollora:make:plugin` / `pollora:plugin:list` / `pollora:plugin:status` — Plugins
-- `pollora:make:block` — Generate a Gutenberg block (dynamic Blade by default, `--static` for `save.jsx`)
+- `pollora:make:block` — Generate a Gutenberg block (dynamic Blade by default, `--static` for `save.jsx`; `--theme`, `--plugin` or `--module`)
+- `pollora:make:module` — Generate a lean Laravel module (`--provider`, `--routes`, `--api`, `--config`, `--database`, `--tests`, `--full`, `--no-assets`)
+- `pollora:module:connector` / `pollora:module:frontend` / `pollora:module:outdated` — Where module states live (and `--import` into another connector), move a module onto the template's Vite build, check Composer modules for updates
 - `pollora:make:post-type` / `pollora:make:taxonomy` — Generate post type and taxonomy classes
 - `pollora:make:action` / `pollora:make:filter` / `pollora:make:hook` — Generate hook classes (`pollora:make:action --async` adds `#[Async]`)
 - `pollora:async:list` — Asynchronous actions, their driver and options, and where the default driver comes from
