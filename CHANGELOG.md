@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-09
+
 ### Added
 
 - **Core guidelines**: debugging with `pollora/debugbar` — what its tabs show, preferred over Query Monitor, and how plugins (`pollora/debugbar/register`) and packages (`Pollora\Debugbar\Collector`) add their own data
