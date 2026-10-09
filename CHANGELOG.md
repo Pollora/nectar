@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Core guidelines**: debugging with `pollora/debugbar` — what its tabs show, preferred over Query Monitor, and how plugins (`pollora/debugbar/register`) and packages (`Pollora\Debugbar\Collector`) add their own data
+
 ### Changed
 - `pollora-modules` skill rewritten for the modules work of the next framework release: `pollora:make:module` and its opt-in layers, `--module` generators, `@pollora/vite-config` and the `module.<name>` asset container, `pollora:module:frontend`, Plugins › Modules, activation connectors and `config/modules.php`, locked modules, Composer modules and `pollora:module:outdated`. Its post type example used `Pollora\Attributes\PostType\PostType`, which does not exist: it is `Pollora\Attributes\PostType`
 - Core guidelines list `pollora:make:module`, `pollora:module:connector|frontend|outdated` and `--module` on `pollora:make:block`
