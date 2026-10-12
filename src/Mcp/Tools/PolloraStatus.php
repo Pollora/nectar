@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Pollora\Nectar\Mcp\Tools;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
+use Pollora\Discovery\Infrastructure\Services\DiscoveryCacheManager;
 
 #[IsReadOnly]
 class PolloraStatus extends Tool
@@ -54,14 +54,45 @@ class PolloraStatus extends Tool
         ]);
     }
 
+    /**
+     * Whether discovery reads its scans from the persistent cache, and that
+     * cache holds every class on disk.
+     *
+     * False in debug mode (the cache is off), before the first request has
+     * filled it, and once a class added since is missing from it: the case
+     * `php artisan discovery:clear` fixes.
+     */
     private function isDiscoveryCached(): bool
     {
-        if (! app()->bound(DiscoveryManager::class)) {
+        if (! app()->bound(DiscoveryManager::class) || ! class_exists(DiscoveryCacheManager::class)) {
             return false;
         }
 
-        // Check if any discovery cache keys exist in Laravel cache
-        return Cache::has('pollora-discoverer-cache-discovery');
+        $cache = app(DiscoveryCacheManager::class);
+
+        try {
+            if (! $cache->isCacheEnabled()) {
+                return false;
+            }
+
+            $locations = app(DiscoveryManager::class)->getLocations();
+
+            if ($locations->isEmpty()) {
+                return false;
+            }
+
+            foreach ($locations as $location) {
+                // null: this location was never cached; a list: classes the cache lacks.
+                if ($cache->classesMissingFromCache($location) !== []) {
+                    return false;
+                }
+            }
+        } catch (\Error) {
+            // Frameworks before 13.34 have neither method, and cannot tell.
+            return false;
+        }
+
+        return true;
     }
 
     private function getPolloraVersion(): string

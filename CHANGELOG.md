@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Skill** `pollora-scheduling`: the fluent API, the three drivers, `pollora:schedule:list|migrate|recover`, and the replacement of `wordpress.use_laravel_scheduler`
 - **Core guidelines**: the `pollora:schedule:*` commands and the `scheduled_events` tool
 
+### Fixed
+
+- `pollora_status` reported `discovery_cached: false` on every site: it looked for a cache key, `pollora-discoverer-cache-discovery`, that the framework no longer writes. It now asks the framework's discovery cache, and answers `true` when the cache is on and holds every class on disk — the same check as `pollora:doctor`. In debug mode, before the first request has filled the cache, or once a new class is missing from it, it answers `false`
+
 ## [1.6.0] - 2026-10-09
 
 ### Added
