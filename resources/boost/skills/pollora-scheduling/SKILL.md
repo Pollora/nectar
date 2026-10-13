@@ -1,12 +1,12 @@
 ---
 name: pollora-scheduling
-description: Schedule recurring tasks using Pollora Schedule attributes with WordPress cron integration.
+description: Schedule recurring and single tasks with Pollora's #[Schedule] attribute or fluent API, on WP-Cron, Action Scheduler or the Laravel queue.
 ---
 
 # Pollora Scheduling Development
 
 ## When to use this skill
-Use this skill when creating scheduled/recurring tasks that run via WordPress cron, using Pollora's attribute-based scheduling system.
+Use this skill when creating scheduled tasks (recurring or single), choosing where they run (WP-Cron, Action Scheduler, the Laravel queue), or finding out why one did not run. The engine is the `pollora/schedule` package (framework v13.36+).
 
 ## Creating Scheduled Tasks
 
@@ -129,15 +129,57 @@ Place schedule classes where the discovery system scans:
 - `app/Cms/Schedule/` in themes
 - `app/Schedule/` in the main application or modules
 
+## Fluent API
+
+When the schedule depends on a condition or a computed value. Declare it on every request: it is scheduled once.
+
+```php
+use Pollora\Schedule\Interval;
+use Pollora\Schedule\Schedule;
+
+Schedule::event('reports_compile')->daily()->at('02:00')->call([Reports::class, 'compile']);
+Schedule::event('cache_warm')->every(new Interval(minutes: 15))->call(WarmCache::class);
+Schedule::once('send_digest')->in(minutes: 10)->with(['user' => 42])->call(SendDigest::class);
+
+Schedule::cancel('send_digest', ['user' => 42]);
+Schedule::next('reports_compile');   // DateTimeImmutable|null
+Schedule::fake();                    // in tests: Schedule::assertScheduled('send_digest')
+```
+
+`at('02:00')` follows the timezone of the site. `call()` takes an invokable class, `[Class::class, 'method']`, a closure or a hook name; classes are built by the container.
+
+## Drivers
+
+`config/schedule.php` (`POLLORA_SCHEDULE_DRIVER`) decides where **every** event goes, including the `wp_schedule_event()` calls of WordPress, plugins and themes:
+
+| Driver | Runs events | Needs |
+|---|---|---|
+| `wp-cron` (default) | WP-Cron | A system cron requesting `wp-cron.php` (Pollora sets `DISABLE_WP_CRON`) |
+| `action-scheduler` | Action Scheduler's queue runner | A plugin that bundles it (WooCommerce) |
+| `laravel` | A queue worker: one delayed job per event | A connection that accepts delays (not `sync`/`null`) and `php artisan queue:work` |
+
+The `cron` option indexes every event, with a `driver` key on those another driver keeps. Changing the driver moves nothing: events already scheduled stay put until `php artisan pollora:schedule:migrate` (`--dry-run`, `--from`, `--to`). An unavailable driver leaves events on WP-Cron.
+
+The removed `wordpress.use_laravel_scheduler` is replaced by `POLLORA_SCHEDULE_DRIVER=laravel` and a worker (no more `schedule:run`).
+
 ## Managing Scheduled Events
 
 ```bash
-# List scheduled cron events
-ddev wp cron event list
+# Every event, with its type and driver (--type, --driver, --site, --network, --json)
+ddev php artisan pollora:schedule:list
+ddev wp cron event list --fields=hook,type,driver
 
-# Run all due cron events
+# Move events to the driver of the site
+ddev php artisan pollora:schedule:migrate --dry-run
+
+# laravel driver: send again events whose job was lost
+ddev php artisan pollora:schedule:recover --dry-run
+
+# Run all due cron events (runs every due event, whoever keeps it)
 ddev wp cron event run --due-now
 ```
+
+`pollora:doctor` reports an unknown or unavailable driver, events left to migrate, late events (no worker) and events that failed for good. The `scheduled_events` Nectar tool returns the same from the index.
 
 ## Important Notes
 
@@ -145,5 +187,5 @@ ddev wp cron event run --due-now
 - Hook names are auto-generated from the method name if not specified
 - `Every::MONTH` and `Every::YEAR` automatically register custom WordPress cron schedules
 - The `Interval` class allows arbitrary timing combinations
-- WordPress cron is "pseudo-cron" — it runs on page visits. For real cron, disable `WP_CRON` and use system cron
+- WordPress cron is "pseudo-cron" — it runs on page visits. Pollora sets `DISABLE_WP_CRON`: with the `wp-cron` and `action-scheduler` drivers something must request `wp-cron.php`; with `laravel` a worker must run
 - Run `php artisan discovery:clear` after adding new schedule classes

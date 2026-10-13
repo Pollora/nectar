@@ -88,6 +88,7 @@ Or register it in your `.mcp.json`:
 | `discovered_components` | All auto-discovered components grouped by type (post types, taxonomies, hooks, schedules, REST routes) |
 | `wordpress_routes` | All routes including `Route::wp()` with WordPress conditions and middleware |
 | `modules_info` | Installed Laravel Modules with status |
+| `scheduled_events` | Scheduled events with the driver that keeps each (WP-Cron, Action Scheduler, Laravel queue), events left to migrate, late events, recent failures |
 | `wp_option` | Read any WordPress option by key |
 
 ## AI Guidelines
@@ -113,7 +114,7 @@ Skills are activated on-demand when working on specific tasks:
 | `pollora-hooks` | Registering WordPress actions & filters |
 | `pollora-blocks` | Gutenberg blocks with JSX, Blade rendering & Tailwind |
 | `pollora-rest-api` | REST API endpoints with `#[WpRestRoute]`, AJAX handlers with `#[Ajax]` |
-| `pollora-scheduling` | Scheduled tasks with `#[Schedule]` |
+| `pollora-scheduling` | Scheduled tasks with `#[Schedule]` and the fluent API, and the WP-Cron, Action Scheduler and Laravel queue drivers |
 | `pollora-abilities` | WordPress Abilities API with `#[Ability]` and the `Ability` facade |
 | `pollora-typed-meta` | Post, term, user and comment meta as typed properties with `#[Meta]`, `Meta::of()`, `pollora:meta:audit` |
 | `pollora-roles` | Capabilities through Laravel's Gate, roles declared with `#[Role]`, `#[ModifyRole]`, `#[CapabilitySet]`, `pollora:roles:*` |
