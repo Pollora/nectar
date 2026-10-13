@@ -156,6 +156,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:roles:prune` / `pollora:roles:import {role}` / `pollora:roles:dump` — Clean up roles removed from the code, turn a stored role into a `#[Role]` class, write the code's roles to the database; dry run unless `--force`
 - `pollora:binding:list` — Binding sources, their fields, and the blocks WordPress lets bind
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
+- `pollora:schedule:list` / `pollora:schedule:migrate` / `pollora:schedule:recover` — Scheduled events and the driver that keeps each (v13.36+); move them between drivers; send again the events a queue lost (`laravel` driver)
 - `pollora:status` — Show framework status
 - `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register, users left with a removed role, and asynchronous actions nothing will run (ignored `#[Async]`, unavailable driver, overdue WP-Cron, jobs without a worker); the same checks are in Tools › Site Health. **Run it first when something fails without an error**
 
@@ -173,4 +174,5 @@ When available, use the `pollora-nectar` MCP server for live introspection:
 - `discovered_components` — All auto-discovered components
 - `wordpress_routes` — Route::wp() routes and conditions
 - `modules_info` — Installed Laravel Modules
+- `scheduled_events` — Scheduled events, their driver, what is left to migrate, late events
 - `wp_option` — Read WordPress options

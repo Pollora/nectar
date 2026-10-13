@@ -13,6 +13,7 @@ use Pollora\Nectar\Mcp\Tools\ModulesInfo;
 use Pollora\Nectar\Mcp\Tools\PolloraStatus;
 use Pollora\Nectar\Mcp\Tools\PostTypesInfo;
 use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
+use Pollora\Nectar\Mcp\Tools\ScheduledEvents;
 use Pollora\Nectar\Mcp\Tools\TaxonomiesInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressRoutes;
@@ -36,6 +37,7 @@ class Nectar extends Server
         DiscoveredComponents::class,
         WordPressRoutes::class,
         ModulesInfo::class,
+        ScheduledEvents::class,
         WpOption::class,
     ];
 

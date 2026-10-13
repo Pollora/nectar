@@ -77,7 +77,14 @@ if (! function_exists('get_option')) {
             'active_plugins' => ['woocommerce/woocommerce.php'],
         ];
 
-        return $options[$option] ?? $default;
+        return $GLOBALS['nectar_test_options'][$option] ?? $options[$option] ?? $default;
+    }
+}
+
+if (! function_exists('_get_cron_array')) {
+    function _get_cron_array(): array
+    {
+        return $GLOBALS['nectar_test_cron'] ?? [];
     }
 }
 

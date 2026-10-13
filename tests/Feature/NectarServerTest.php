@@ -9,17 +9,18 @@ use Pollora\Nectar\Mcp\Tools\ModulesInfo;
 use Pollora\Nectar\Mcp\Tools\PolloraStatus;
 use Pollora\Nectar\Mcp\Tools\PostTypesInfo;
 use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
+use Pollora\Nectar\Mcp\Tools\ScheduledEvents;
 use Pollora\Nectar\Mcp\Tools\TaxonomiesInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressRoutes;
 use Pollora\Nectar\Mcp\Tools\WpOption;
 
-it('registers all 10 tools', function () {
+it('registers all 11 tools', function () {
     $reflection = new ReflectionClass(Nectar::class);
     $property = $reflection->getProperty('tools');
     $tools = $property->getDefaultValue();
 
-    expect($tools)->toHaveCount(10)
+    expect($tools)->toHaveCount(11)
         ->toContain(PolloraStatus::class)
         ->toContain(WordPressInfo::class)
         ->toContain(PostTypesInfo::class)
@@ -29,6 +30,7 @@ it('registers all 10 tools', function () {
         ->toContain(DiscoveredComponents::class)
         ->toContain(WordPressRoutes::class)
         ->toContain(ModulesInfo::class)
+        ->toContain(ScheduledEvents::class)
         ->toContain(WpOption::class);
 });
 
