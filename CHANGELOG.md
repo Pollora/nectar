@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-14
+
 ### Added
 - **Tool** `scheduled_events`: the scheduled events with the driver that keeps each (WP-Cron, Action Scheduler, Laravel queue), where they stand against the configured driver (`active`, `protected`, `fallback`, `to migrate`), whether the driver is available, late events and the failures of the last week. Read from the `cron` option, with `type`, `driver` and `limit` filters; it needs no framework class, so it answers on any 13.x
 - **Skill** `pollora-scheduling`: the fluent API, the three drivers, `pollora:schedule:list|migrate|recover`, and the replacement of `wordpress.use_laravel_scheduler`
