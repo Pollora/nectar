@@ -59,7 +59,7 @@ public function filterContent(string $content): string {}
 public function syncToCrm(int $postId): void {}
 
 // REST API endpoints
-#[WpRestRoute(namespace: 'app/v1', route: 'items')]
+#[WpRestRoute(namespace: 'app/v1', route: 'items', permissionCallback: IsLoggedIn::class)] // Everyone::class for a public route; none is deprecated
 class ItemAPI {}
 
 // Scheduled tasks

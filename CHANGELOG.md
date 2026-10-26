@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The REST examples of the `pollora-rest-api` skill and the core guidelines declare a permission on every route (`Everyone`, `IsLoggedIn`, `IsAdmin`): `pollora/wp-rest` 0.2 deprecates a route without one
+
 ## [1.7.0] - 2026-10-14
 
 ### Added

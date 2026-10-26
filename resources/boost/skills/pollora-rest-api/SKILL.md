@@ -19,11 +19,14 @@ namespace Theme\MyTheme\Cms\Api;
 
 use Pollora\Attributes\WpRestRoute;
 use Pollora\Attributes\WpRestRoute\Method;
+use Pollora\WpRest\Permissions\Everyone;
+use Pollora\WpRest\Permissions\IsLoggedIn;
 use WP_REST_Response;
 
 #[WpRestRoute(
     namespace: 'my-theme/v1',
-    route: 'items'
+    route: 'items',
+    permissionCallback: Everyone::class
 )]
 class ItemsAPI
 {
@@ -35,7 +38,7 @@ class ItemsAPI
         ]);
     }
 
-    #[Method('POST')]
+    #[Method('POST', permissionCallback: IsLoggedIn::class)]
     public function store(\WP_REST_Request $request): WP_REST_Response
     {
         $name = $request->get_param('name');
@@ -55,7 +58,8 @@ Endpoint: `GET /wp-json/my-theme/v1/items`
 ```php
 #[WpRestRoute(
     namespace: 'my-theme/v1',
-    route: 'documents/(?P<documentId>\d+)'
+    route: 'documents/(?P<documentId>\d+)',
+    permissionCallback: Everyone::class
 )]
 class DocumentAPI
 {
@@ -67,7 +71,7 @@ class DocumentAPI
         ]);
     }
 
-    #[Method(['PUT', 'PATCH'])]
+    #[Method(['PUT', 'PATCH'], permissionCallback: IsLoggedIn::class)]
     public function update(\WP_REST_Request $request, int $documentId): WP_REST_Response
     {
         return new WP_REST_Response([
@@ -76,7 +80,7 @@ class DocumentAPI
         ]);
     }
 
-    #[Method('DELETE')]
+    #[Method('DELETE', permissionCallback: IsAdmin::class)]
     public function delete(int $documentId): WP_REST_Response
     {
         return new WP_REST_Response(null, 204);
@@ -88,10 +92,11 @@ Endpoint: `GET /wp-json/my-theme/v1/documents/18`
 
 ### Permissions
 
-Use built-in permission classes or create custom ones:
+Always declare a permission. A route without one is public, and `pollora/wp-rest` 0.2 warns about it (`_doing_it_wrong`); the next major version refuses it. Use `Everyone::class` for a route that is public on purpose, a method's permission replaces its route's, or create a custom class:
 
 ```php
 use Pollora\WpRest\Permissions\Can;
+use Pollora\WpRest\Permissions\Everyone;
 use Pollora\WpRest\Permissions\IsAdmin;
 use Pollora\WpRest\Permissions\IsLoggedIn;
 
