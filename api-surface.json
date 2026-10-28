@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "surface": {
+        "command:nectar:mcp": "command",
+        "config:nectar.enabled": "key",
+        "config:nectar.mcp": "key",
+        "config:nectar.mcp.tools": "key",
+        "config:nectar.mcp.tools.exclude": "key",
+        "config:nectar.mcp.tools.include": "key",
+        "config:nectar.wp_cli": "key",
+        "config:nectar.wp_cli.allowed_commands": "key",
+        "hook:pollora/async/recover": "hook",
+        "hook:pollora/async/run": "hook"
+    }
+}

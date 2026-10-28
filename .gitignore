@@ -8,3 +8,5 @@ composer.lock
 *.swp
 *.swo
 .DS_Store
+# Pollora harness reports
+/.harness/

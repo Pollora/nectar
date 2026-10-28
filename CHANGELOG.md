@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `laravel/mcp` (`^1.0`) and `pollora/discovery` (`^0.1 || ^1.0`) are declared: the package uses their classes and relied on them being installed by `laravel/boost` and `pollora/framework`. `laravel/mcp` 0.x, which Boost also accepts, is no longer accepted
 - The REST examples of the `pollora-rest-api` skill and the core guidelines declare a permission on every route (`Everyone`, `IsLoggedIn`, `IsAdmin`): `pollora/wp-rest` 0.2 deprecates a route without one
 
 ## [1.7.0] - 2026-10-14
