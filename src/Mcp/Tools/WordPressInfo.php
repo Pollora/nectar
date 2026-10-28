@@ -26,7 +26,7 @@ class WordPressInfo extends Tool
         if (! function_exists('get_plugins') && defined('ABSPATH')) {
             $pluginFile = ABSPATH.'wp-admin/includes/plugin.php';
             if (file_exists($pluginFile)) {
-                require_once $pluginFile; // @phpstan-ignore requireOnce.fileNotFound
+                require_once $pluginFile;
             }
         }
 

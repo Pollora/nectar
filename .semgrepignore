@@ -1,0 +1,3 @@
+# Documentation, not a template a site renders: its Boost snippet shows the Loop facade calls
+# that Pollora 13 removed, `{!! Loop::title() !!}` included.
+src/Mcp/Prompts/UpgradePolloraV13/upgrade-pollora-v13.blade.php

@@ -24,7 +24,7 @@ class DiscoveredComponents extends Tool
      *
      * @var array<string, string>
      */
-    private const TYPE_MAP = [
+    private const array TYPE_MAP = [
         'post_type' => 'post_types',
         'taxonomy' => 'taxonomies',
         'hook' => 'hooks',

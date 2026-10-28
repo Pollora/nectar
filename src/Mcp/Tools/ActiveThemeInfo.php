@@ -100,7 +100,7 @@ class ActiveThemeInfo extends Tool
         }
 
         return collect(File::files($providersDir))
-            ->filter(fn ($file) => $file->getExtension() === 'php')
+            ->filter(fn ($file): bool => $file->getExtension() === 'php')
             ->map(fn ($file) => $file->getFilenameWithoutExtension())
             ->values()
             ->all();
