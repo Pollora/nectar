@@ -10,3 +10,4 @@ composer.lock
 .DS_Store
 # Pollora harness reports
 /.harness/
+patches.lock.json
