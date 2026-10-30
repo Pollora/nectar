@@ -23,7 +23,7 @@
         "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^2.0",
-        "pollora/harness": "^0.1.11"
+        "pollora/harness": "^0.1.15"
     },
     "autoload": {
         "psr-4": {
