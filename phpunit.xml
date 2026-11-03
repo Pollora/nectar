@@ -14,5 +14,9 @@
         <include>
             <directory>src</directory>
         </include>
+        <!-- Blade prompt templates are rendered by Blade, never run as PHP: they only dilute the measured rate. -->
+        <exclude>
+            <directory suffix=".blade.php">src</directory>
+        </exclude>
     </source>
 </phpunit>
