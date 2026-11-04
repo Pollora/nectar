@@ -9,6 +9,9 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <testsuite name="Architecture">
+            <file>tests/Arch.php</file>
+        </testsuite>
     </testsuites>
     <source>
         <include>
