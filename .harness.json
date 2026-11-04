@@ -1,6 +1,9 @@
 {
     "profile": "integration",
     "mode": "enforce",
+    "allow_commands": [
+        { "command": "nectar:mcp", "reason": "nectar:mcp is the command that starts the MCP server and is referenced by MCP client configurations; renaming it would break them" }
+    ],
     "ratchet": {
         "phpstan_level": 5,
         "phpstan_baseline": 0,
