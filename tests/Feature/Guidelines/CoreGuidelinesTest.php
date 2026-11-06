@@ -20,10 +20,12 @@ function renderCoreGuidelines(): string
 }
 
 it('keeps Blade directives quoted in the text as text', function () {
-    expect(renderCoreGuidelines())
+    $guidelines = renderCoreGuidelines();
+
+    expect($guidelines)
         ->toContain('`@can`')
-        ->toContain('#[Meta(showInRest: true)]')
-        ->not->toContain('<?php');
+        ->toContain('#[Meta(showInRest: true)]');
+    expect(str_contains($guidelines, '<?php'))->toBeFalse();
 });
 
 it('points to the skills of typed meta, roles and Block Bindings', function () {
@@ -31,6 +33,15 @@ it('points to the skills of typed meta, roles and Block Bindings', function () {
         ->toContain('pollora-typed-meta')
         ->toContain('pollora-roles')
         ->toContain('pollora-block-bindings');
+});
+
+it('lists only the hook generators the framework registers', function () {
+    $guidelines = renderCoreGuidelines();
+
+    expect($guidelines)
+        ->toContain('pollora:make:action')
+        ->toContain('pollora:make:filter');
+    expect(str_contains($guidelines, 'pollora:make:hook'))->toBeFalse();
 });
 
 it('names every skill after its directory, with a description', function (string $skill) {

@@ -147,7 +147,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:make:module` — Generate a lean Laravel module (`--provider`, `--routes`, `--api`, `--config`, `--database`, `--tests`, `--full`, `--no-assets`)
 - `pollora:module:connector` / `pollora:module:frontend` / `pollora:module:outdated` — Where module states live (and `--import` into another connector), move a module onto the template's Vite build, check Composer modules for updates
 - `pollora:make:post-type` / `pollora:make:taxonomy` — Generate post type and taxonomy classes
-- `pollora:make:action` / `pollora:make:filter` / `pollora:make:hook` — Generate hook classes (`pollora:make:action --async` adds `#[Async]`)
+- `pollora:make:action` / `pollora:make:filter` — Generate hook classes (`pollora:make:action --async` adds `#[Async]`)
 - `pollora:async:list` — Asynchronous actions, their driver and options, and where the default driver comes from
 - `pollora:make:model` / `pollora:make:wp-cli` — Generate an Eloquent model or a WP-CLI command class
 - `pollora:make:role` / `pollora:make:binding` — Generate a `#[Role]` class or a `#[BlockBinding]` source

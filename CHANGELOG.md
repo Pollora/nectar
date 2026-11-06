@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The core guidelines no longer list `pollora:make:hook`: the framework does not register that command (`php artisan pollora:make:hook` answers "Command not defined"), only `pollora:make:action` and `pollora:make:filter`. An agent that followed the guidelines ran a command that does not exist
+
 ### Changed
 
 - `laravel/mcp` (`^1.0`) and `pollora/discovery` (`^0.1 || ^1.0`) are declared: the package uses their classes and relied on them being installed by `laravel/boost` and `pollora/framework`. `laravel/mcp` 0.x, which Boost also accepts, is no longer accepted
