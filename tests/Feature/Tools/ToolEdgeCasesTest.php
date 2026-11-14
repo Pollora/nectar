@@ -151,4 +151,7 @@ it('gives a WordPress route its condition and the controller of its action', fun
         'wp_condition' => 'is_page',
         'wp_condition_params' => ['about'],
     ])->and($payload['summary']['wordpress_routes'])->toBe(1);
-});
+})->skip(
+    ! class_exists(PolloraRoute::class),
+    'The route model of the framework this test builds is not in the oldest framework the package accepts.'
+);
