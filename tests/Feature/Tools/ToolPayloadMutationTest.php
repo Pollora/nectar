@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Mcp\Request;
+use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Nectar\Mcp\Tools\ModulesInfo;
 use Pollora\Nectar\Mcp\Tools\PostTypesInfo;
 use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
@@ -165,13 +166,13 @@ it('counts the WordPress routes apart from the Laravel ones and gives a conditio
 );
 
 it('lists both kinds of hook when no type is asked, and only the asked kind otherwise', function (?string $type, array $expected): void {
-    $manager = Mockery::mock(Pollora\Discovery\Application\Services\DiscoveryManager::class);
+    $manager = Mockery::mock(DiscoveryManager::class);
     $manager->shouldReceive('getDiscoveredItems')->andReturn([]);
-    app()->instance(Pollora\Discovery\Application\Services\DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, $manager);
 
     expect(toolMutationDecode(new RegisteredHooks, $type === null ? [] : ['type' => $type]))->toBe($expected);
 
-    app()->forgetInstance(Pollora\Discovery\Application\Services\DiscoveryManager::class);
+    app()->forgetInstance(DiscoveryManager::class);
 })->with([
     'both' => [null, ['actions' => [], 'filters' => []]],
     'actions' => ['action', ['actions' => []]],
