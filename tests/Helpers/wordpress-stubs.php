@@ -35,7 +35,7 @@ if (! function_exists('get_stylesheet')) {
 if (! function_exists('get_template')) {
     function get_template(): string
     {
-        return 'test-theme';
+        return $GLOBALS['nectar_test_template'] ?? 'test-theme';
     }
 }
 
@@ -77,6 +77,10 @@ if (! function_exists('get_option')) {
             'active_plugins' => ['woocommerce/woocommerce.php'],
         ];
 
+        if (in_array($option, $GLOBALS['nectar_test_missing_options'] ?? [], true)) {
+            return $default;
+        }
+
         return $GLOBALS['nectar_test_options'][$option] ?? $options[$option] ?? $default;
     }
 }
@@ -91,7 +95,7 @@ if (! function_exists('_get_cron_array')) {
 if (! function_exists('get_plugins')) {
     function get_plugins(): array
     {
-        return [
+        return $GLOBALS['nectar_test_plugins'] ?? [
             'woocommerce/woocommerce.php' => [
                 'Name' => 'WooCommerce',
                 'Version' => '9.0.0',
