@@ -66,9 +66,12 @@ class ItemAPI {}
 #[Schedule(Every::DAY)]
 public function dailyCleanup(): void {}
 
-// AJAX handlers — logged-in users only unless access says otherwise
-#[Ajax('load_more', access: AjaxAccess::ALL)]
-public function loadMore(): void {}
+// AJAX handlers — logged-in users only unless access says otherwise, and say how each one is protected (pollora/ajax 1.2+)
+#[Ajax('save_note', nonce: true)] // verifies the nonce `save_note` before the method runs, 403 otherwise
+public function saveNote(): void {}
+
+#[Ajax('track_visit', access: AjaxAccess::GUEST, nonce: false)] // no nonce, on purpose
+public function trackVisit(): void {}
 
 // WordPress Abilities API (WP 6.9+) — a class implementing AbilityHandler
 #[Ability(name: 'acme/create-post', description: 'Creates a post.', category: 'acme-content')]
@@ -134,7 +137,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - **Which template answered?** With `WP_DEBUG` on, every page carries `<!-- pollora:template="single" path="themes/x/resources/views/single.blade.php" -->` (hierarchy responses only, not `Route::wp()` or Laravel routes)
 - **Debugging**: `composer require --dev pollora/debugbar` adds Pollora's and WordPress's tabs to Laravel Debugbar — what answered the request (route, or hierarchy view and condition), `$wpdb` queries, hooks, WordPress phases, and REST/admin-ajax calls in the bar's request list. Prefer it to Query Monitor. Plugins add data with the `pollora/debugbar/register` action (no dependency), packages by extending `Pollora\Debugbar\Collector`; `wp_*` and `pollora*` tab names are reserved
 - **Meta, roles, bindings**: declare a meta with `#[Meta]` on a typed property rather than calling `register_meta()` and casting `get_post_meta()` by hand (`pollora-typed-meta` skill); declare roles with `#[Role]` / `#[ModifyRole]` rather than `add_role()`, and check a capability (`can:`, `@can`) rather than a role (`pollora-roles` skill); bind core blocks to a `#[BlockBinding]` source or `pollora/post-meta` before writing a custom block (`pollora-block-bindings` skill)
-- **CSRF**: WordPress endpoints are excluded from Laravel CSRF — WordPress uses its own nonce system
+- **CSRF and nonces**: WordPress endpoints are excluded from Laravel CSRF — WordPress uses its own nonce system. Say how every `#[Ajax]` action is protected (pollora/ajax 1.2+): `nonce: true` verifies a nonce (create it with `wp_create_nonce('action')`, send it as `_ajax_nonce`) before the method runs, `nonce: false` turns it off on purpose; an action that does not say still runs unchecked for now and is reported with `WP_DEBUG`, and the next major version of `pollora/ajax` verifies a nonce by default. Never leave an action open to guests without deciding. A REST route is protected by its permission callback
 - **Modules**: Use `nwidart/laravel-modules` for large projects — `pollora:make:module` creates a lean module (no provider: discovery works inside modules), built with `@pollora/vite-config`; switch modules with `module:enable|disable` or Plugins › Modules (see the `pollora-modules` skill)
 
 ### Available Artisan Commands
