@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The guidelines and the REST and AJAX skill show how an AJAX action is protected.** `#[Ajax]` examples declare their nonce (`nonce: true`, or `nonce: false` on purpose, `pollora/ajax` 1.2+) instead of showing an action that does not say, and an agent is told to choose it for every action, what a request without a valid nonce gets (a 403), what happens to an action that does not choose (it runs unchecked for now and is reported with `WP_DEBUG`; the next major version of `pollora/ajax` verifies a nonce by default) and not to open an action to guests without deciding. The skill no longer teaches a `check_ajax_referer()` call in the handler.
 - `laravel/mcp` (`^1.0`) and `pollora/discovery` (`^0.1 || ^1.0`) are declared: the package uses their classes and relied on them being installed by `laravel/boost` and `pollora/framework`. `laravel/mcp` 0.x, which Boost also accepts, is no longer accepted
 - The REST examples of the `pollora-rest-api` skill and the core guidelines declare a permission on every route (`Everyone`, `IsLoggedIn`, `IsAdmin`): `pollora/wp-rest` 0.2 deprecates a route without one
 

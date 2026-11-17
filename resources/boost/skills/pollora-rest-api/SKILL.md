@@ -164,7 +164,7 @@ Endpoint: `GET /api/products/search`
 
 ## AJAX Handlers (admin-ajax.php)
 
-For `admin-ajax.php` actions, put `#[Ajax]` on a public method. The class is discovered and built through the container. Handlers are **logged-in users only** unless `access` says otherwise.
+For `admin-ajax.php` actions, put `#[Ajax]` on a public method. The class is discovered and built through the container. Handlers are **logged-in users only** unless `access` says otherwise, and **say how they are protected against cross-site request forgery** with `nonce` (`pollora/ajax` 1.2+).
 
 ```php
 use Pollora\Attributes\Ajax;
@@ -172,14 +172,13 @@ use Pollora\Ajax\Domain\Model\AjaxAccess;
 
 class NewsletterHandler
 {
-    #[Ajax('subscribe')]                               // wp_ajax_subscribe (logged in)
+    #[Ajax('subscribe', nonce: true)]                  // wp_ajax_subscribe (logged in); verifies the nonce `subscribe`
     public function subscribe(): void
     {
-        check_ajax_referer('newsletter');
         wp_send_json_success(['message' => 'Subscribed!']);
     }
 
-    #[Ajax('load_more', access: AjaxAccess::ALL)]      // + wp_ajax_nopriv_load_more
+    #[Ajax('load_more', access: AjaxAccess::ALL, nonce: false)]  // + wp_ajax_nopriv_load_more; no nonce, on purpose
     public function loadMore(): void
     {
         wp_send_json_success([]);
@@ -187,7 +186,18 @@ class NewsletterHandler
 }
 ```
 
-`AjaxAccess::LOGGED` (default), `AjaxAccess::ALL`, `AjaxAccess::GUEST`. The imperative form is `Ajax::listen('action', $handler)->forAllUsers()` / `->forGuestUsers()`.
+`AjaxAccess::LOGGED` (default), `AjaxAccess::ALL`, `AjaxAccess::GUEST`. The imperative form is `Ajax::listen('action', $handler)->forAllUsers()` / `->forGuestUsers()`, with `->requireNonce()` or `->withoutNonce()` for the nonce.
+
+The `nonce` parameter:
+
+| Value | Effect |
+|---|---|
+| `true` | Verifies a nonce named after the action before the method runs. A request without a valid one gets a 403 (`pollora_ajax_invalid_nonce`) and the method does not run |
+| `'notes_form'` | Verifies the nonce of that name |
+| `false` | No nonce, on purpose (a public beacon, a webhook that signs its own requests) |
+| not given | Not chosen yet: the action runs **without a check** and WordPress is told (`_doing_it_wrong()`, visible with `WP_DEBUG`). The next major version of `pollora/ajax` verifies a nonce by default |
+
+The page creates the nonce for the same name, `wp_create_nonce('subscribe')`, and sends it in the `_ajax_nonce` field. Always choose `true` or `false` when you write an action: never leave it out, and never write `nonce: false` for an action that changes data without another protection. A guest's nonce is tied to no user and a cached page can serve an old one, so prefer another protection for an action open to guests. A `check_ajax_referer()` call in a method that declares `nonce: true` is redundant; a method that verifies the nonce by hand says `nonce: false`, so that Pollora does not report it.
 
 ## Choosing Between Approaches
 
