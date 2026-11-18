@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- The reserved `wp_cli.allowed_commands` list no longer names `option get`, `option list` or `db query`. No tool reads the list today (Nectar has no WP-CLI tool), but a list that called them "safe to execute" would have exposed an option's secret, or any database row, to the first tool that read it. The key stays (public surface unchanged) and its comment says it is reserved.
+
+### Security
+
 - **The `wp_option` tool no longer reads options that hold secrets.** It returned any option, including the API keys, tokens, passwords and salts that plugins store, and an AI agent could send them to a model provider (audit SEC-07). It now refuses an option whose name matches `pass(word)`, `secret`, `token`, `api[_-]key`, `private[_-]key`, `salt`, `auth`, `credential` or `license` (case-insensitive) and the WordPress security keys (`auth_key`, `secure_auth_key`, `logged_in_key`, `nonce_key`, `recovery_keys`), with a message that says why and how to allow it, without revealing whether the option exists. Inside an array or object option, every sub-key that matches the same rule is replaced by `[masqué]`. To read a safe option that the rule refuses, list its exact name under the new `wp_option.allow` key of `config/nectar.php` (exact names only, never a pattern; secret-looking sub-keys stay masked). The tool description, the core guidelines and the README say so
 
 ### Fixed

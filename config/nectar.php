@@ -56,8 +56,11 @@ return [
     | WP-CLI Configuration
     |--------------------------------------------------------------------------
     |
-    | Configure the WP-CLI tool behavior. The allowlist defines which WP-CLI
-    | commands are safe to execute through the MCP server.
+    | Reserved. No tool of Nectar runs WP-CLI commands today and nothing reads this
+    | list. It is kept so that the key stays in the public configuration; a tool
+    | that reads it in the future must apply the same rules as the wp_option tool
+    | (never a secret). It therefore lists read-only commands that cannot reveal an
+    | option, a user's data or a database row.
     |
     */
 
@@ -68,8 +71,6 @@ return [
             'plugin status',
             'theme list',
             'theme status',
-            'option get',
-            'option list',
             'post-type list',
             'taxonomy list',
             'user list',
@@ -78,7 +79,6 @@ return [
             'menu list',
             'sidebar list',
             'widget list',
-            'db query',
         ],
     ],
 
