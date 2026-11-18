@@ -16,6 +16,9 @@ it('has wp_cli allowed commands configured', function () {
 
     expect($commands)->toBeArray()
         ->toContain('core version')
-        ->toContain('plugin list')
-        ->toContain('option get');
+        ->toContain('plugin list');
 });
+
+it('never lists a WP-CLI command that can read a secret in the reserved wp_cli list', function (string $command) {
+    expect(config('nectar.wp_cli.allowed_commands'))->not->toContain($command);
+})->with(['option get', 'option list', 'db query', 'config get', 'eval', 'eval-file', 'shell']);
