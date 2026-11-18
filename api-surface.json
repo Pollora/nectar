@@ -9,6 +9,8 @@
         "config:nectar.mcp.tools.include": "key",
         "config:nectar.wp_cli": "key",
         "config:nectar.wp_cli.allowed_commands": "key",
+        "config:nectar.wp_option": "key",
+        "config:nectar.wp_option.allow": "key",
         "hook:pollora/async/recover": "hook",
         "hook:pollora/async/run": "hook"
     }

@@ -178,4 +178,4 @@ When available, use the `pollora-nectar` MCP server for live introspection:
 - `wordpress_routes` — Route::wp() routes and conditions
 - `modules_info` — Installed Laravel Modules
 - `scheduled_events` — Scheduled events, their driver, what is left to migrate, late events
-- `wp_option` — Read WordPress options
+- `wp_option` — Read WordPress options (refuses secret-looking names such as passwords, tokens, API keys and salts, and masks secret-looking sub-keys; never try to get around it: the owner allows a safe option by its exact name in `wp_option.allow` of `config/nectar.php`)

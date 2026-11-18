@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **The `wp_option` tool no longer reads options that hold secrets.** It returned any option, including the API keys, tokens, passwords and salts that plugins store, and an AI agent could send them to a model provider (audit SEC-07). It now refuses an option whose name matches `pass(word)`, `secret`, `token`, `api[_-]key`, `private[_-]key`, `salt`, `auth`, `credential` or `license` (case-insensitive) and the WordPress security keys (`auth_key`, `secure_auth_key`, `logged_in_key`, `nonce_key`, `recovery_keys`), with a message that says why and how to allow it, without revealing whether the option exists. Inside an array or object option, every sub-key that matches the same rule is replaced by `[masqué]`. To read a safe option that the rule refuses, list its exact name under the new `wp_option.allow` key of `config/nectar.php` (exact names only, never a pattern; secret-looking sub-keys stay masked). The tool description, the core guidelines and the README say so
+
 ### Fixed
 
 - The core guidelines no longer list `pollora:make:hook`: the framework does not register that command (`php artisan pollora:make:hook` answers "Command not defined"), only `pollora:make:action` and `pollora:make:filter`. An agent that followed the guidelines ran a command that does not exist
