@@ -10,13 +10,14 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Nectar\Mcp\Support\OptionSecretGuard;
 
 #[IsReadOnly]
 class WpOption extends Tool
 {
     protected string $name = 'wp_option';
 
-    protected string $description = 'Read a WordPress option value by key (read-only). Returns the option value or indicates if it does not exist.';
+    protected string $description = 'Read a WordPress option value by key (read-only). Returns the option value or indicates if it does not exist. Options whose name looks like a secret (password, token, API key, salt...) are refused unless allowed in config, and secret-looking sub-keys are masked.';
 
     /**
      * @return array<string, Type>
@@ -38,8 +39,14 @@ class WpOption extends Tool
 
         $key = $request->get('key');
 
-        if (! $key) {
+        if (! is_string($key) || $key === '') {
             return Response::text('The "key" parameter is required.');
+        }
+
+        $guard = new OptionSecretGuard((array) config('nectar.wp_option.allow', []));
+
+        if ($guard->isDenied($key)) {
+            return Response::text($guard->denialMessage($key));
         }
 
         $sentinel = '__nectar_option_not_found__';
@@ -56,7 +63,7 @@ class WpOption extends Tool
         return Response::json([
             'key' => $key,
             'exists' => true,
-            'value' => $value,
+            'value' => $guard->redact($value),
         ]);
     }
 }

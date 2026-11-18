@@ -35,6 +35,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | wp_option Tool
+    |--------------------------------------------------------------------------
+    |
+    | The wp_option tool refuses options whose name looks like a secret (password,
+    | secret, token, API key, private key, salt, auth, credential, license) and the
+    | WordPress security keys, because what it returns is sent to an AI model.
+    | List here, by exact name, the options that are safe to show. Never a pattern:
+    | a name is allowed only if it is written in full. Secret-looking sub-keys inside
+    | an array option stay masked even for an allowed option.
+    |
+    */
+
+    'wp_option' => [
+        'allow' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | WP-CLI Configuration
     |--------------------------------------------------------------------------
     |

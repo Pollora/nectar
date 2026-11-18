@@ -89,7 +89,7 @@ Or register it in your `.mcp.json`:
 | `wordpress_routes` | All routes including `Route::wp()` with WordPress conditions and middleware |
 | `modules_info` | Installed Laravel Modules with status |
 | `scheduled_events` | Scheduled events with the driver that keeps each (WP-Cron, Action Scheduler, Laravel queue), events left to migrate, late events, recent failures |
-| `wp_option` | Read any WordPress option by key |
+| `wp_option` | Read a WordPress option by key. Options whose name looks like a secret (password, secret, token, API key, private key, salt, auth, credential, license) and the WordPress security keys are refused, and such sub-keys inside an array option are shown as `[masqué]`. Allow a safe option by its exact name in `wp_option.allow` (`config/nectar.php`) |
 
 ## AI Guidelines
 
