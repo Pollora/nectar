@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-11-19
+
 ### Security
 
 - The reserved `wp_cli.allowed_commands` list no longer names `option get`, `option list` or `db query`. No tool reads the list today (Nectar has no WP-CLI tool), but a list that called them "safe to execute" would have exposed an option's secret, or any database row, to the first tool that read it. The key stays (public surface unchanged) and its comment says it is reserved.
