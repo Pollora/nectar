@@ -7,6 +7,7 @@ use Pollora\Discovery\Domain\Contracts\DiscoveryLocationInterface;
 use Pollora\Discovery\Infrastructure\Services\DiscoveryCacheManager;
 use Pollora\Nectar\Mcp\Nectar;
 use Pollora\Nectar\Mcp\Tools\PolloraStatus;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 
 beforeEach(function (): void {
     $composerLock = json_encode([
@@ -55,9 +56,7 @@ function discoveryCacheReporting(bool $enabled, ?array $missing): void
 {
     $location = Mockery::mock(DiscoveryLocationInterface::class);
 
-    $manager = Mockery::mock(DiscoveryManager::class);
-    $manager->shouldReceive('getLocations')->andReturn(collect([$location]));
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager(locations: [$location]));
 
     $cache = Mockery::mock(DiscoveryCacheManager::class);
     $cache->shouldReceive('isCacheEnabled')->andReturn($enabled);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Nectar\Mcp\Nectar;
 use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 
 beforeEach(function () {
     $actionAttribute = Mockery::mock();
@@ -58,12 +59,7 @@ beforeEach(function () {
         ],
     ];
 
-    $discoveryManager = Mockery::mock(DiscoveryManager::class);
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('hooks')
-        ->andReturn($discoveredItems);
-
-    app()->instance(DiscoveryManager::class, $discoveryManager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager(['hooks' => $discoveredItems]));
 });
 
 it('returns both actions and filters when no type filter', function () {
