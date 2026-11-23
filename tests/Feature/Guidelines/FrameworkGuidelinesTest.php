@@ -38,3 +38,11 @@ it('gives a Pollora 13 project the 13.x text only', function () {
 it('reads the installed framework when no major is given', function () {
     expect(renderFrameworkGuidelines())->toContain('## Pollora 13.x Specifics');
 });
+
+it('tells a Pollora 13 project about the persistent object cache, and not a Pollora 12 one', function () {
+    expect(renderFrameworkGuidelines(['polloraMajor' => 13]))
+        ->toContain('### Persistent Object Cache')
+        ->toContain("Cache::store('wordpress')")
+        ->toContain('pollora:object-cache:enable');
+    expect(renderFrameworkGuidelines(['polloraMajor' => 12]))->not->toContain('### Persistent Object Cache');
+});

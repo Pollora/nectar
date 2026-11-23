@@ -123,6 +123,10 @@ Asynchronous actions, from v13.35.2 (`pollora/hook` `^1.4`): `Action::add(...)->
 
 WordPress is loaded from a service provider's `boot()`; `wp()` runs there. Since v13.35.1, `template_redirect` (then `pollora_loaded`) fires once every provider has booted, still before routing, so a plugin or theme rendering a view from `template_redirect` gets the theme's view composers and shared data. Code that relied on `template_redirect` having fired during the providers' boot must move to a later hook.
 
+### Persistent Object Cache
+
+`pollora/object-cache` (0.1, not yet used in production, pin the version) keeps what WordPress caches in Redis between requests. It needs `ext-redis`; without it the drop-in defines nothing and WordPress keeps its own in-memory cache. Install it, then run `php artisan pollora:object-cache:enable` to copy the drop-in to `wp-content/object-cache.php`; installing alone changes nothing. The connection comes from Laravel's `database.redis` (connection `default`, not `cache`: `cache:clear` on a Redis cache store empties the whole database), the settings from `pollora.object-cache`. Every key carries a site prefix, so a flush empties this site only. `Cache::store('wordpress')` (`'driver' => 'wordpress'` in `config/cache.php`) reads and writes the same cache in the `laravel` group; `php artisan cache:clear` also empties the site's object cache unless `laravel.flush_with_cache_clear` is `false`. When Redis stops answering, reads miss and nothing throws. `pollora:doctor` suggests the package when phpredis is loaded and no drop-in persists the cache.
+
 ### Extracted Packages
 
 Some modules now live in their own packages, installed with the framework: `pollora/hook` (hook domain and adapters), `pollora/option`, `pollora/ajax`, `pollora/abilities`.

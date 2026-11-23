@@ -82,3 +82,11 @@ it('names every skill after its directory, with a description', function (string
 
     expect($content)->toStartWith("---\nname: ".basename($skill)."\ndescription: ");
 })->with(fn (): array => glob(dirname(__DIR__, 3).'/resources/boost/skills/*', GLOB_ONLYDIR) ?: []);
+
+it('documents the object cache commands and the SQLite option', function () {
+    expect(renderCoreGuidelines())
+        ->toContain('pollora:object-cache:enable')
+        ->toContain('`:flush`')
+        ->toContain('`--db=sqlite`')
+        ->toContain('object-cache-package');
+});
