@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-11-23
+
+### Added
+
+- The core guidelines list the `pollora:object-cache:enable`, `:disable`, `:status` and `:flush` commands of `pollora/object-cache`, the `--db=sqlite` option of `pollora:install` (development, CI and demos only), and the `pollora:doctor` checks that came with framework v13.43.2 (persistent object cache, SQLite, WordPress network).
+- The framework guidelines of a Pollora 13 project have a "Persistent Object Cache" section: what the package does, that it needs `ext-redis` and `pollora:object-cache:enable`, the `wordpress` cache driver, the site prefix, and the doctor suggestion.
+
 ## [1.8.0] - 2026-11-19
 
 ### Security

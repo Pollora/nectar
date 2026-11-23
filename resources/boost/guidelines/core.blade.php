@@ -142,7 +142,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 
 ### Available Artisan Commands
 
-- `pollora:install` — Full project installation (`--theme` to pick the generated theme; runs without interaction)
+- `pollora:install` — Full project installation (`--theme` to pick the generated theme; `--db=sqlite` for development, CI and demos only, never production; runs without interaction)
 - `pollora:env:setup` — Install and configure WordPress
 - `pollora:make:theme` / `pollora:theme:delete` / `pollora:theme:status` — Themes
 - `pollora:make:plugin` / `pollora:plugin:list` / `pollora:plugin:status` — Plugins
@@ -158,10 +158,11 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:roles:list` / `pollora:roles:show {role}` — Roles with their origin; the effective capabilities of one role and where each comes from
 - `pollora:roles:prune` / `pollora:roles:import {role}` / `pollora:roles:dump` — Clean up roles removed from the code, turn a stored role into a `#[Role]` class, write the code's roles to the database; dry run unless `--force`
 - `pollora:binding:list` — Binding sources, their fields, and the blocks WordPress lets bind
+- `pollora:object-cache:enable` / `:disable` / `:status` / `:flush` — Only with `pollora/object-cache` installed: copy or remove the `object-cache.php` drop-in (another object cache's drop-in is never replaced unless `enable --force`), show drop-in, phpredis, Redis and key prefix, empty this site's keys (never the Redis database)
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:schedule:list` / `pollora:schedule:migrate` / `pollora:schedule:recover` — Scheduled events and the driver that keeps each (v13.36+); move them between drivers; send again the events a queue lost (`laravel` driver)
 - `pollora:status` — Show framework status
-- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register, users left with a removed role, and asynchronous actions nothing will run (ignored `#[Async]`, unavailable driver, overdue WP-Cron, jobs without a worker); the same checks are in Tools › Site Health. **Run it first when something fails without an error**
+- `pollora:doctor` — Check the project for silent failures (core patch, patches lock, `.env`, discovery cache, theme build, patterns…) and print the fix for each, including bindings that can never show a value, typed meta that cannot register, users left with a removed role, and asynchronous actions nothing will run (ignored `#[Async]`, unavailable driver, overdue WP-Cron, jobs without a worker), a missing persistent object cache or drop-in (`object-cache-package`), the SQLite plugin and drop-in, and a WordPress network; the same checks are in Tools › Site Health. **Run it first when something fails without an error**
 
 Commands use the colon convention since v13.32; the former dashed names (`pollora:make-theme`…) still work as aliases.
 
