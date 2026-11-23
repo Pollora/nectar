@@ -6,6 +6,7 @@ use Laravel\Mcp\Request;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Discovery\Infrastructure\Services\DiscoveryCacheManager;
 use Pollora\Nectar\Mcp\Tools\PolloraStatus;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 
 /**
  * @return array<string, mixed>
@@ -35,9 +36,7 @@ it('reports an unknown framework version when composer.lock does not list the fr
 });
 
 it('reports discovery as not cached when there is no location to cache', function (): void {
-    $manager = Mockery::mock(DiscoveryManager::class);
-    $manager->shouldReceive('getLocations')->andReturn(collect());
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager());
 
     $cache = Mockery::mock(DiscoveryCacheManager::class);
     $cache->shouldReceive('isCacheEnabled')->andReturn(true);
@@ -47,8 +46,7 @@ it('reports discovery as not cached when there is no location to cache', functio
 });
 
 it('reports discovery as not cached when the framework predates the cache checks', function (): void {
-    $manager = Mockery::mock(DiscoveryManager::class);
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager());
 
     $cache = Mockery::mock(DiscoveryCacheManager::class);
     $cache->shouldReceive('isCacheEnabled')->andThrow(new Error('Call to undefined method'));

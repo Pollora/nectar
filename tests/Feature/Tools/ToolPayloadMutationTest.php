@@ -11,6 +11,7 @@ use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
 use Pollora\Nectar\Mcp\Tools\TaxonomiesInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressRoutes;
 use Pollora\Nectar\Mcp\Tools\WpOption;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 use Pollora\Route\Infrastructure\Models\Route as PolloraRoute;
 
 /**
@@ -166,9 +167,7 @@ it('counts the WordPress routes apart from the Laravel ones and gives a conditio
 );
 
 it('lists both kinds of hook when no type is asked, and only the asked kind otherwise', function (?string $type, array $expected): void {
-    $manager = Mockery::mock(DiscoveryManager::class);
-    $manager->shouldReceive('getDiscoveredItems')->andReturn([]);
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager());
 
     expect(toolMutationDecode(new RegisteredHooks, $type === null ? [] : ['type' => $type]))->toBe($expected);
 

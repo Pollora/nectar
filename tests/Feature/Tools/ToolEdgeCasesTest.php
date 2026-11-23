@@ -9,6 +9,7 @@ use Pollora\Nectar\Mcp\Tools\RegisteredHooks;
 use Pollora\Nectar\Mcp\Tools\WordPressInfo;
 use Pollora\Nectar\Mcp\Tools\WordPressRoutes;
 use Pollora\Nectar\Mcp\Tools\WpOption;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 use Pollora\Route\Infrastructure\Models\Route as PolloraRoute;
 
 /**
@@ -50,11 +51,7 @@ function brokenDiscoveredItem(array $item = []): array
 
 function discoveryReturning(array $byId): void
 {
-    $manager = Mockery::mock(DiscoveryManager::class);
-    $manager->shouldReceive('getDiscoveredItems')->andReturnUsing(
-        fn (string $id) => $byId[$id] instanceof Throwable ? throw $byId[$id] : $byId[$id]
-    );
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager($byId));
 }
 
 afterEach(function (): void {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Nectar\Mcp\Nectar;
 use Pollora\Nectar\Mcp\Tools\DiscoveredComponents;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 
 beforeEach(function () {
     $postTypeAttr = Mockery::mock();
@@ -46,40 +47,24 @@ beforeEach(function () {
         'permissionCallback' => null,
     ]);
 
-    $discoveryManager = Mockery::mock(DiscoveryManager::class);
-
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('post_types')
-        ->andReturn([
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager([
+        'post_types' => [
             ['class' => 'App\\PostTypes\\Book', 'method' => null, 'attribute' => $postTypeAttr],
-        ]);
-
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('taxonomies')
-        ->andReturn([
+        ],
+        'taxonomies' => [
             ['class' => 'App\\Taxonomies\\Genre', 'method' => null, 'attribute' => $taxonomyAttr],
-        ]);
-
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('hooks')
-        ->andReturn([
+        ],
+        'hooks' => [
             ['type' => 'action', 'class' => 'App\\Hooks\\ThemeHooks', 'method' => 'onInit', 'attribute' => $actionAttr],
             ['type' => 'filter', 'class' => 'App\\Hooks\\ThemeHooks', 'method' => 'filterContent', 'attribute' => $filterAttr],
-        ]);
-
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('schedules')
-        ->andReturn([
+        ],
+        'schedules' => [
             ['class' => 'App\\Schedule\\CleanupTask', 'method' => 'handle', 'attribute' => $scheduleAttr],
-        ]);
-
-    $discoveryManager->shouldReceive('getDiscoveredItems')
-        ->with('wp_rest_routes')
-        ->andReturn([
+        ],
+        'wp_rest_routes' => [
             ['class' => 'App\\Api\\ItemEndpoint', 'method' => null, 'attribute' => $restRouteAttr],
-        ]);
-
-    app()->instance(DiscoveryManager::class, $discoveryManager);
+        ],
+    ]));
 });
 
 it('returns all component types with summary', function () {

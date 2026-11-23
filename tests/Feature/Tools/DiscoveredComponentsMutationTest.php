@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Laravel\Mcp\Request;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Nectar\Mcp\Tools\DiscoveredComponents;
+use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
 
 /**
  * @param  array<string, mixed>  $arguments
@@ -22,9 +23,7 @@ function discoveredMutationResult(array $arguments = []): array|string
  */
 function discoveredMutationManager(array $byId): void
 {
-    $manager = Mockery::mock(DiscoveryManager::class);
-    $manager->shouldReceive('getDiscoveredItems')->andReturnUsing(fn (string $id): array => $byId[$id] ?? []);
-    app()->instance(DiscoveryManager::class, $manager);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager($byId));
 }
 
 /**
