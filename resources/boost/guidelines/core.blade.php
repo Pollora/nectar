@@ -158,7 +158,7 @@ Design tokens (colours, font sizes, fonts, radii) live in the `@theme static` bl
 - `pollora:roles:list` / `pollora:roles:show {role}` — Roles with their origin; the effective capabilities of one role and where each comes from
 - `pollora:roles:prune` / `pollora:roles:import {role}` / `pollora:roles:dump` — Clean up roles removed from the code, turn a stored role into a `#[Role]` class, write the code's roles to the database; dry run unless `--force`
 - `pollora:binding:list` — Binding sources, their fields, and the blocks WordPress lets bind
-- `pollora:object-cache:enable` / `:disable` / `:status` / `:flush` — Only with `pollora/object-cache` installed: copy or remove the `object-cache.php` drop-in (another object cache's drop-in is never replaced unless `enable --force`), show drop-in, phpredis, Redis and key prefix, empty this site's keys (never the Redis database)
+- `pollora:object-cache:enable` / `:disable` / `:status` / `:flush` — `pollora/object-cache` ships with the framework from v13.43.3 (earlier: only when the package is installed): copy or remove the `object-cache.php` drop-in (another object cache's drop-in is never replaced unless `enable --force`), show drop-in, phpredis, Redis and key prefix, empty this site's keys (never the Redis database)
 - `discovery:run` / `discovery:clear` — Manage component discovery cache
 - `pollora:schedule:list` / `pollora:schedule:migrate` / `pollora:schedule:recover` — Scheduled events and the driver that keeps each (v13.36+); move them between drivers; send again the events a queue lost (`laravel` driver)
 - `pollora:status` — Show framework status
