@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The "Persistent Object Cache" guideline and the `pollora:object-cache:*` commands follow `pollora/object-cache` 0.3: the package ships with the framework from v13.43.3 (nothing to require), `pollora:object-cache:enable` is run again after an update from 0.1 or 0.2 (drop-in version 2), and the doctor check warns on a missing or foreign drop-in.
+
 ## [1.9.0] - 2026-11-23
 
 ### Added

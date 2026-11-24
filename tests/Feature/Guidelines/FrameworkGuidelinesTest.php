@@ -43,6 +43,8 @@ it('tells a Pollora 13 project about the persistent object cache, and not a Poll
     expect(renderFrameworkGuidelines(['polloraMajor' => 13]))
         ->toContain('### Persistent Object Cache')
         ->toContain("Cache::store('wordpress')")
-        ->toContain('pollora:object-cache:enable');
+        ->toContain('pollora:object-cache:enable')
+        ->toContain('ships with the framework')
+        ->not->toContain('(0.1,');
     expect(renderFrameworkGuidelines(['polloraMajor' => 12]))->not->toContain('### Persistent Object Cache');
 });
