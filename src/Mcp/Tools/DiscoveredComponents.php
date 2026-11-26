@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Nectar\Mcp\Tools;
 
+use BackedEnum;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
 use Laravel\Mcp\Request;
@@ -11,6 +12,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
+use UnitEnum;
 
 #[IsReadOnly]
 class DiscoveredComponents extends Tool
@@ -153,8 +155,8 @@ class DiscoveredComponents extends Tool
             return $recurrence['display'] ?? json_encode($recurrence);
         }
 
-        if (is_object($recurrence) && enum_exists($recurrence::class)) {
-            return $recurrence->value ?? $recurrence->name;
+        if ($recurrence instanceof UnitEnum) {
+            return $recurrence instanceof BackedEnum ? (string) $recurrence->value : $recurrence->name;
         }
 
         // A `Pollora\Schedule\Interval` has no string form: it is described by its schedule
