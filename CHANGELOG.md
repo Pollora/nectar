@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- PHPStan runs at level 10. The MCP tools accept input and application data of an unexpected type instead of failing: a non-text `type` filter is refused as invalid, packages of `composer.lock` without a name and version are ignored, an integer-backed recurrence enum is shown by its value
+
 ### Fixed
 
 - `discovered_components` no longer drops the hook and recurrence of a schedule declared with an `Interval`
