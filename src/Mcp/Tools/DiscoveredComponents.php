@@ -157,6 +157,11 @@ class DiscoveredComponents extends Tool
             return $recurrence->value ?? $recurrence->name;
         }
 
+        // A `Pollora\Schedule\Interval` has no string form: it is described by its schedule
+        if (is_object($recurrence) && method_exists($recurrence, 'toScheduleArray')) {
+            return $this->formatRecurrence($recurrence->toScheduleArray());
+        }
+
         return (string) $recurrence;
     }
 }
