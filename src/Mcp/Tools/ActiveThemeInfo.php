@@ -138,6 +138,9 @@ class ActiveThemeInfo extends Tool
      */
     private function directories(string $path): array
     {
-        return array_values(array_filter(File::directories($path), is_string(...)));
+        /** @var list<string> $directories */
+        $directories = File::directories($path);
+
+        return $directories;
     }
 }

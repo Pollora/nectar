@@ -56,16 +56,18 @@ class DiscoveredComponents extends Tool
 
         $type = $request->get('type');
 
-        if ($type && (! is_string($type) || ! isset(self::TYPE_MAP[$type]))) {
-            return Response::text('Invalid type. Valid types: '.implode(', ', array_keys(self::TYPE_MAP)));
+        $filteredMap = self::TYPE_MAP;
+
+        if ($type) {
+            if (! is_string($type) || ! isset(self::TYPE_MAP[$type])) {
+                return Response::text('Invalid type. Valid types: '.implode(', ', array_keys(self::TYPE_MAP)));
+            }
+
+            $filteredMap = [$type => self::TYPE_MAP[$type]];
         }
 
         /** @var DiscoveryManager $discoveryManager */
         $discoveryManager = app(DiscoveryManager::class);
-
-        $filteredMap = is_string($type) && $type !== '' && isset(self::TYPE_MAP[$type])
-            ? [$type => self::TYPE_MAP[$type]]
-            : self::TYPE_MAP;
 
         $components = [];
 
@@ -168,8 +170,10 @@ class DiscoveredComponents extends Tool
             return $this->formatRecurrence($recurrence->toScheduleArray());
         }
 
-        return $recurrence === null || is_scalar($recurrence) || $recurrence instanceof Stringable
-            ? (string) $recurrence
-            : throw new UnexpectedValueException('The recurrence of the schedule has no text.');
+        if ($recurrence !== null && ! is_scalar($recurrence) && ! $recurrence instanceof Stringable) {
+            throw new UnexpectedValueException('The recurrence of the schedule has no text.');
+        }
+
+        return Value::text($recurrence);
     }
 }
