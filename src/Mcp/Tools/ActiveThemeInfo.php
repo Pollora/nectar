@@ -81,7 +81,7 @@ class ActiveThemeInfo extends Tool
             return [];
         }
 
-        return collect(File::directories($directory))
+        return collect($this->directories($directory))
             ->filter(fn (string $dir): bool => File::exists("{$dir}/block.json"))
             ->map(fn (string $dir): string => basename($dir))
             ->values()
@@ -120,7 +120,7 @@ class ActiveThemeInfo extends Tool
             }
         }
 
-        foreach (File::directories($viewsPath) as $dir) {
+        foreach ($this->directories($viewsPath) as $dir) {
             $dirName = basename($dir);
             $templates = array_merge(
                 $templates,
@@ -129,5 +129,15 @@ class ActiveThemeInfo extends Tool
         }
 
         return $templates;
+    }
+
+    /**
+     * The directories a directory holds.
+     *
+     * @return list<string>
+     */
+    private function directories(string $path): array
+    {
+        return array_values(array_filter(File::directories($path), is_string(...)));
     }
 }

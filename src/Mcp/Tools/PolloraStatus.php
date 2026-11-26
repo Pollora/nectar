@@ -32,15 +32,10 @@ class PolloraStatus extends Tool
 
         $discoveryCached = $this->isDiscoveryCached();
 
-        $polloraPackages = collect(json_decode(
-            File::get(base_path('composer.lock')),
-            true
-        )['packages'] ?? [])->filter(
-            fn (array $pkg): bool => str_starts_with($pkg['name'], 'pollora/')
-        )->map(fn (array $pkg): array => [
-            'name' => $pkg['name'],
-            'version' => $pkg['version'],
-        ])->values()->all();
+        $polloraPackages = array_values(array_filter(
+            $this->lockedPackages(),
+            static fn (array $package): bool => str_starts_with($package['name'], 'pollora/'),
+        ));
 
         return Response::json([
             'php_version' => PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION,
@@ -97,14 +92,31 @@ class PolloraStatus extends Tool
 
     private function getPolloraVersion(): string
     {
-        $composerLock = json_decode(File::get(base_path('composer.lock')), true);
-
-        foreach ($composerLock['packages'] ?? [] as $package) {
+        foreach ($this->lockedPackages() as $package) {
             if ($package['name'] === 'pollora/framework') {
                 return $package['version'];
             }
         }
 
         return 'unknown';
+    }
+
+    /**
+     * The packages composer.lock installs, with their versions.
+     *
+     * @return list<array{name: string, version: string}>
+     */
+    private function lockedPackages(): array
+    {
+        $lock = json_decode(File::get(base_path('composer.lock')), true);
+        $packages = [];
+
+        foreach (is_array($lock) && is_array($lock['packages'] ?? null) ? $lock['packages'] : [] as $package) {
+            if (is_array($package) && is_string($package['name'] ?? null) && is_string($package['version'] ?? null)) {
+                $packages[] = ['name' => $package['name'], 'version' => $package['version']];
+            }
+        }
+
+        return $packages;
     }
 }

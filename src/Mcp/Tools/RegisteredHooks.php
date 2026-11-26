@@ -11,6 +11,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
+use Pollora\Nectar\Support\Value;
 
 #[IsReadOnly]
 class RegisteredHooks extends Tool
@@ -50,6 +51,7 @@ class RegisteredHooks extends Tool
         $hooks = [];
 
         foreach ($discoveredItems as $item) {
+            $item = is_array($item) ? $item : [];
             $hookType = $item['type'] ?? 'unknown';
 
             if ($type && $type !== $hookType) {
@@ -57,8 +59,8 @@ class RegisteredHooks extends Tool
             }
 
             try {
-                $attribute = $item['attribute']->newInstance();
-                $hookName = $attribute->hook;
+                $attribute = Value::attribute($item['attribute'] ?? null);
+                $hookName = $attribute->hook ?? 'unknown';
                 $priority = $attribute->priority ?? 10;
             } catch (\Throwable) {
                 $hookName = 'unknown';

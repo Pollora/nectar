@@ -8,6 +8,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Nectar\Support\Value;
 
 #[IsReadOnly]
 class ModulesInfo extends Tool
@@ -25,14 +26,15 @@ class ModulesInfo extends Tool
             ]);
         }
 
-        $moduleManager = app('modules');
+        $all = Value::ask(app('modules'), 'all');
         $modules = [];
 
-        foreach ($moduleManager->all() as $module) {
-            $modules[$module->getName()] = [
-                'name' => $module->getName(),
-                'path' => str_replace(base_path().'/', '', $module->getPath()),
-                'enabled' => $module->isEnabled(),
+        foreach (is_iterable($all) ? $all : [] as $module) {
+            $name = Value::text(Value::ask($module, 'getName'));
+            $modules[$name] = [
+                'name' => $name,
+                'path' => str_replace(base_path().'/', '', Value::text(Value::ask($module, 'getPath'))),
+                'enabled' => Value::ask($module, 'isEnabled'),
             ];
         }
 

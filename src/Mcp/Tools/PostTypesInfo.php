@@ -10,6 +10,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Nectar\Support\Value;
 
 #[IsReadOnly]
 class PostTypesInfo extends Tool
@@ -46,7 +47,7 @@ class PostTypesInfo extends Tool
         if ($filter) {
             $postTypes = array_filter(
                 $postTypes,
-                fn (object $pt): bool => str_contains($pt->name, $filter)
+                fn (object $pt): bool => str_contains($pt->name, Value::text($filter))
             );
         }
 
