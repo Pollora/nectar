@@ -36,7 +36,7 @@ class WordPressRoutes extends Tool
                 'is_wordpress_route' => $isWordPress,
             ];
 
-            if (isset($action['controller'])) {
+            if (is_array($action) && isset($action['controller'])) {
                 $routeInfo['controller'] = $action['controller'];
             }
 

@@ -12,6 +12,9 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Pollora\Discovery\Application\Services\DiscoveryManager;
+use Pollora\Nectar\Support\Value;
+use Stringable;
+use UnexpectedValueException;
 use UnitEnum;
 
 #[IsReadOnly]
@@ -53,14 +56,14 @@ class DiscoveredComponents extends Tool
 
         $type = $request->get('type');
 
-        if ($type && ! isset(self::TYPE_MAP[$type])) {
+        if ($type && (! is_string($type) || ! isset(self::TYPE_MAP[$type]))) {
             return Response::text('Invalid type. Valid types: '.implode(', ', array_keys(self::TYPE_MAP)));
         }
 
         /** @var DiscoveryManager $discoveryManager */
         $discoveryManager = app(DiscoveryManager::class);
 
-        $filteredMap = $type
+        $filteredMap = is_string($type) && $type !== '' && isset(self::TYPE_MAP[$type])
             ? [$type => self::TYPE_MAP[$type]]
             : self::TYPE_MAP;
 
@@ -84,7 +87,7 @@ class DiscoveredComponents extends Tool
     }
 
     /**
-     * @param  iterable<array<string, mixed>>  $discoveredItems
+     * @param  iterable<mixed>  $discoveredItems
      * @return array<int, array{class: string, method: string|null, details: array<string, mixed>}>
      */
     private function extractComponents(iterable $discoveredItems, string $typeName): array
@@ -92,13 +95,14 @@ class DiscoveredComponents extends Tool
         $results = [];
 
         foreach ($discoveredItems as $item) {
+            $item = is_array($item) ? $item : [];
             $entry = [
-                'class' => $item['class'] ?? 'unknown',
-                'method' => $item['method'] ?? null,
+                'class' => is_string($item['class'] ?? null) ? $item['class'] : 'unknown',
+                'method' => is_string($item['method'] ?? null) ? $item['method'] : null,
             ];
 
             try {
-                $attribute = $item['attribute']->newInstance();
+                $attribute = Value::attribute($item['attribute'] ?? null);
                 $entry['details'] = $this->extractDetails($attribute, $typeName, $item);
             } catch (\Throwable) {
                 $entry['details'] = [];
@@ -111,7 +115,7 @@ class DiscoveredComponents extends Tool
     }
 
     /**
-     * @param  array<string, mixed>  $item
+     * @param  array<array-key, mixed>  $item
      * @return array<string, mixed>
      */
     private function extractDetails(object $attribute, string $typeName, array $item): array
@@ -152,7 +156,7 @@ class DiscoveredComponents extends Tool
         }
 
         if (is_array($recurrence)) {
-            return $recurrence['display'] ?? json_encode($recurrence);
+            return Value::text($recurrence['display'] ?? json_encode($recurrence));
         }
 
         if ($recurrence instanceof UnitEnum) {
@@ -164,6 +168,8 @@ class DiscoveredComponents extends Tool
             return $this->formatRecurrence($recurrence->toScheduleArray());
         }
 
-        return (string) $recurrence;
+        return $recurrence === null || is_scalar($recurrence) || $recurrence instanceof Stringable
+            ? (string) $recurrence
+            : throw new UnexpectedValueException('The recurrence of the schedule has no text.');
     }
 }

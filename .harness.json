@@ -8,10 +8,10 @@
         }
     ],
     "ratchet": {
-        "phpstan_level": 8,
+        "phpstan_level": 9,
         "phpstan_baseline": 0,
         "coverage": 96,
-        "type_coverage": 98.3,
+        "type_coverage": 98.5,
         "msi": 95
     }
 }

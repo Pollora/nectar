@@ -10,6 +10,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Nectar\Support\Value;
 
 #[IsReadOnly]
 class TaxonomiesInfo extends Tool
@@ -46,7 +47,7 @@ class TaxonomiesInfo extends Tool
         if ($filter) {
             $taxonomies = array_filter(
                 $taxonomies,
-                fn (object $tax): bool => str_contains($tax->name, $filter)
+                fn (object $tax): bool => str_contains($tax->name, Value::text($filter))
             );
         }
 

@@ -10,6 +10,7 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Pollora\Nectar\Support\Value;
 
 #[IsReadOnly]
 class ScheduledEvents extends Tool
@@ -40,7 +41,7 @@ class ScheduledEvents extends Tool
 
         $type = $request->get('type');
         $driver = $request->get('driver');
-        $limit = max(1, (int) ($request->get('limit') ?: 100));
+        $limit = max(1, Value::integer($request->get('limit') ?: 100));
 
         if ($type !== null && ! in_array($type, ['once', 'recurring'], true)) {
             return Response::text('"type" is "once" or "recurring".');
@@ -53,7 +54,7 @@ class ScheduledEvents extends Tool
 
         $toMigrate = [];
         $late = 0;
-        $lateAfter = max(60, (int) config('schedule.laravel.late_after', 600));
+        $lateAfter = max(60, Value::integer(config('schedule.laravel.late_after', 600)));
 
         foreach ($events as &$event) {
             $event['placement'] = $this->placement($event, $configured, $available, $protected);
@@ -107,7 +108,7 @@ class ScheduledEvents extends Tool
     private function queueRuns(): bool
     {
         $connection = config('schedule.laravel.connection') ?: config('queue.default', 'sync');
-        $driver = config(sprintf('queue.connections.%s.driver', $connection));
+        $driver = config(sprintf('queue.connections.%s.driver', Value::text($connection)));
 
         return is_string($driver) && ! in_array($driver, ['sync', 'null'], true);
     }
@@ -119,11 +120,11 @@ class ScheduledEvents extends Tool
     {
         $hooks = config('schedule.protected_hooks', []);
 
-        return array_values(array_unique([...self::BUILT_IN_PROTECTED, ...array_map(strval(...), is_array($hooks) ? $hooks : [])]));
+        return array_values(array_unique([...self::BUILT_IN_PROTECTED, ...array_map(Value::text(...), is_array($hooks) ? $hooks : [])]));
     }
 
     /**
-     * @return list<array<string, mixed>>
+     * @return list<array{hook: string, type: string, recurrence: string|null, interval: int|null, next_run: string, next_run_in: int, driver: string, args: array<mixed>, timestamp: int}>
      */
     private function events(): array
     {
@@ -187,7 +188,7 @@ class ScheduledEvents extends Tool
     /**
      * Failures of the "laravel" driver in the last week.
      *
-     * @return list<array<string, mixed>>
+     * @return list<array<array-key, mixed>>
      */
     private function failures(): array
     {
