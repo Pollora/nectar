@@ -6,6 +6,7 @@ use Pollora\Discovery\Application\Services\DiscoveryManager;
 use Pollora\Nectar\Mcp\Nectar;
 use Pollora\Nectar\Mcp\Tools\DiscoveredComponents;
 use Pollora\Nectar\Tests\Helpers\FakeDiscovery;
+use Pollora\Schedule\Interval;
 
 beforeEach(function () {
     $postTypeAttr = Mockery::mock();
@@ -117,4 +118,20 @@ it('reports missing discovery system', function () {
     Nectar::tool(DiscoveredComponents::class)
         ->assertOk()
         ->assertSee('Discovery system is not available');
+});
+
+it('names a schedule that recurs at a custom interval', function () {
+    $attribute = Mockery::mock();
+    $attribute->shouldReceive('newInstance')->andReturn((object) [
+        'hook' => 'sync_hook',
+        'recurrence' => new Interval(minutes: 5, display: 'Every five minutes'),
+    ]);
+    app()->instance(DiscoveryManager::class, FakeDiscovery::manager([
+        'schedules' => [['class' => 'App\\Schedule\\SyncTask', 'method' => 'handle', 'attribute' => $attribute]],
+    ]));
+
+    Nectar::tool(DiscoveredComponents::class, ['type' => 'schedule'])
+        ->assertOk()
+        ->assertSee('sync_hook')
+        ->assertSee('Every five minutes');
 });
