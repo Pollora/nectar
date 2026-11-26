@@ -8,7 +8,7 @@
         }
     ],
     "ratchet": {
-        "phpstan_level": 9,
+        "phpstan_level": "max",
         "phpstan_baseline": 0,
         "coverage": 96,
         "type_coverage": 98.5,
